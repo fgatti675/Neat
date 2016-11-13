@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.cahue.RestaurantActivity">
+    <item
+        android:id="@+id/action_pay"
+        android:title="@string/action_pay"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_menu"
+        android:icon="@drawable/ic_view_list_white"
+        android:title="@string/action_settings"
+        app:showAsAction="always" />
+</menu>

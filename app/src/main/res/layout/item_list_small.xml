@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.cahue.model.Item" />
+
+        <variable name="handlers" type="com.cahue.util.ItemClickHandler"/>
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:onClick="@{(view) -> handlers.onItemClick(view, item)}"
+        android:background="?attr/selectableItemBackground"
+        android:paddingStart="@dimen/large_padding"
+        android:paddingEnd="@dimen/large_padding"
+        android:paddingBottom="@dimen/small_padding"
+        android:paddingTop="@dimen/small_padding">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_tag"
+            android:padding="@dimen/default_padding"
+            android:scaleType="fitCenter"
+            app:itemIcon="@{item}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/item_fork" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/large_padding"
+            android:maxLines="1"
+            android:text="@{item.name}"
+            android:textAppearance="@style/Text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1/3 Mahou" />
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Text.Small"
+            app:itemPrice="@{item}"
+            app:layout_constraintBaseline_toBaselineOf="@+id/title"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toRightOf="@+id/title"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2,40€" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/default_padding"
+            android:layout_marginStart="@dimen/default_padding"
+            android:textAppearance="@style/Text"
+            android:text="................................................................................................"
+            app:layout_constraintBottom_toBottomOf="@+id/title"
+            app:layout_constraintLeft_toRightOf="@+id/title"
+            app:layout_constraintRight_toLeftOf="@+id/price"
+            app:layout_constraintTop_toTopOf="@+id/title" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Neat</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_pay">Pagar</string>
+    <string name="see_all">Ver todo</string>
+    <string name="see_all_drinks">Ver todas las bebidas</string>
+    <string name="select_products_empty">¡Aun no has pedido nada!</string>
+    <string name="select_products_info">Selecciona los productos que quieras pedir en el menu y apareceran aquí</string>
+    <string name="order">Pedir</string>
+
+</resources>
