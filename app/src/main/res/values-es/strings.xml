@@ -2,12 +2,21 @@
 <resources>
 
     <string name="app_name">Neat</string>
-    <string name="action_settings">Ajustes</string>
-    <string name="action_pay">Pagar</string>
+    <string name="settings">Ajustes</string>
+    <string name="pay">Pagar</string>
     <string name="see_all">Ver todo</string>
     <string name="see_all_drinks">Ver todas las bebidas</string>
-    <string name="select_products_empty">¡Aun no has pedido nada!</string>
-    <string name="select_products_info">Selecciona los productos que quieras pedir en el menu y apareceran aquí</string>
+    <string name="pending_products_empty">¡Nada listo para pedir!</string>
+    <string name="pending_products_subtitle">Selecciona los productos que quieras pedir en el menu y apareceran aquí</string>
     <string name="order">Pedir</string>
-
+    <string name="pending_products_title">Productos listos para pedir</string>
+    <string name="requested_products_empty">No has pedido ningún producto aún</string>
+    <string name="requested_products_info">Los productos ordenados se mostrarán aquí</string>
+    <string name="bill_so_far">Tu cuenta hasta ahora</string>
+    <string name="on_the_way">¡Marchando!</string>
+    <string name="on_the_way_long">Los productos seleccionados han sido pedidos</string>
+    <string name="undo">Cancelar</string>
+    <string name="loading">Cargando</string>
+    <string name="log_out">Desconectar</string>
+    <string name="table_participants">En la mesa %1$s %2$s</string>
 </resources>

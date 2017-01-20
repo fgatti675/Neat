@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "757078308340",
+    "firebase_url": "https://neat-eb7c6.firebaseio.com",
+    "project_id": "neat-eb7c6",
+    "storage_bucket": "neat-eb7c6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757078308340:android:e5d66c4babc3556d",
+        "android_client_info": {
+          "package_name": "com.neat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "757078308340-2l4nmmj2r4tctksej5l8u3q487m4d6u0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neat",
+            "certificate_hash": "2885A58F6BDDAD656BD4B028632851BF678DEF9A"
+          }
+        },
+        {
+          "client_id": "757078308340-hk5d3ka5bhdbt5jnll2dmr8u5asdk6p9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.neat",
+            "certificate_hash": "761D0221937F3F313D0BC0364A5C77A288D43C23"
+          }
+        },
+        {
+          "client_id": "757078308340-up3q2pd3fps57e9ngqo1fht9me3mcldi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF05NxKJdBQ5k1ZaniR6B5PmqB_tnL2JA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "757078308340-up3q2pd3fps57e9ngqo1fht9me3mcldi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

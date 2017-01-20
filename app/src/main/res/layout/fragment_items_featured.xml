@@ -5,7 +5,6 @@
     android:focusable="true"
     android:orientation="vertical"
     android:layout_marginTop="@dimen/larger_padding"
-    android:layout_marginBottom="@dimen/default_padding"
     tools:context=".fragments.ItemListSmallFragment">
 
     <include layout="@layout/layout_section_header" />

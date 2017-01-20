@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="order"
+            type="com.neat.model.Order" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/order_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/tiny_padding"
+        android:paddingEnd="@dimen/tiny_padding"
+        android:transitionName='@{order.item.id + "_view"}'
+        tools:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="fitCenter"
+            app:itemIcon="@{order.item}"
+            android:transitionName='@{order.item.id + "_icon"}'
+            tools:src="@drawable/item_fork" />
+
+        <TextView
+            android:id="@+id/order_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/tiny_padding"
+            android:text='@{"x" + order.count}'
+            android:textAppearance="@style/Text.Small.White"
+            android:transitionName='@{order.item.id + "_count"}'
+            android:visibility="@{order.count > 1 ? View.VISIBLE : View.GONE}"
+            tools:text="x2"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</layout>

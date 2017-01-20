@@ -1,14 +1,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.cahue.RestaurantActivity">
+    tools:context="com.neat.RestaurantActivity">
     <item
         android:id="@+id/action_pay"
-        android:title="@string/action_pay"
+        android:title="@string/pay"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_menu"
         android:icon="@drawable/ic_view_list_white"
-        android:title="@string/action_settings"
+        android:title="@string/settings"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_disconnect"
+        android:title="@string/log_out"
+        app:showAsAction="never" />
 </menu>

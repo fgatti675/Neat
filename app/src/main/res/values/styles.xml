@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="Cahue" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Neat" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -14,16 +14,32 @@
 
     </style>
 
-    <style name="Cahue.NoActionBar">
+    <style name="Neat.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Cahue.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Neat.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Button.Accent" parent="Widget.AppCompat.Button">
+    <style name="Button" parent="Widget.AppCompat.Button">
+    </style>
+
+    <style name="Button.Accent" >
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@color/colorAccent</item>
+    </style>
+
+    <style name="Button.Google">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:colorButtonNormal">@color/google_red</item>
+    </style>
+
+    <style name="Button.Facebook" >
+        <item name="android:textColor">@color/white</item>
+        <item name="android:colorButtonNormal">@color/facebook_blue</item>
+    </style>
+
+    <style name="Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
     </style>
 
 
@@ -46,11 +62,31 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="Text.Mono">
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="Text.Caption.Mono">
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
     <style name="Text.Title.Mono">
         <item name="android:fontFamily">monospace</item>
     </style>
 
-    <style name="Text.Subtitle" parent="TextAppearance.AppCompat.Subhead" />
+    <style name="Text.Header.Mono">
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="Text.Small.Mono">
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="Text.Header" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/text_primary_dark</item>
+    </style>
+
+    <style name="Text.Subhead" parent="TextAppearance.AppCompat.Subhead" />
 
     <style name="Text.White">
         <item name="android:textColor">@color/white</item>
@@ -92,13 +128,18 @@
         <item name="android:fontFamily">monospace</item>
     </style>
 
-    <style name="Text.Subtitle.White">
+    <style name="Text.Header.White">
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="Text.Header" parent="TextAppearance.AppCompat.Display1">
+    <style name="Text.Subhead.White">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Text.ExpandedTitle" parent="TextAppearance.AppCompat.Display2">
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">monospace</item>
+        <item name="android:background">@color/light_grey</item>
     </style>
 
     <style name="Text.Secondary">

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/orders_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
-    android:elevation="2dp"
     android:minHeight="@dimen/orders_layout_sneak_peak"
-    tools:showIn="@layout/layout_orders">
+    android:transitionName="orders_layout">
 
     <ImageView
         android:id="@+id/caret"
@@ -16,63 +14,80 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         android:layout_marginTop="@dimen/large_padding"
+        android:rotation="0"
+        android:transitionName="caret"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_caret_up_white" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/collapsed_orders_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="@dimen/default_padding"
-        android:layout_marginTop="@dimen/large_padding"
-        android:text="@string/select_products_empty"
-        android:textAppearance="@style/Text.Subtitle.White"
+        android:layout_marginStart="@dimen/large_padding"
+        android:text="@string/pending_products_empty"
+        android:textAppearance="@style/Text.Header.White"
+        android:transitionName="pending_order_title"
         app:layout_constraintBottom_toBottomOf="@+id/caret"
         app:layout_constraintLeft_toRightOf="@+id/caret"
-        app:layout_constraintRight_toLeftOf="@+id/request_button"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toLeftOf="@+id/order_button"
+        app:layout_constraintTop_toTopOf="@+id/caret" />
 
     <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/items_layout"
+        android:id="@+id/pending_items_layout"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="@dimen/large_padding"
-        android:paddingTop="@dimen/tiny_padding"
         android:layout_marginStart="@dimen/large_padding"
         android:orientation="horizontal"
+        android:transitionName="items_layout"
+        android:visibility="invisible"
         app:flexWrap="wrap"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="@+id/title"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintRight_toRightOf="@+id/collapsed_orders_title"
+        app:layout_constraintTop_toBottomOf="@+id/collapsed_orders_title" />
 
     <TextView
-        android:id="@+id/empty_text"
+        android:id="@+id/collapsed_orders_subtitle"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/large_padding"
-        android:layout_marginTop="8dp"
-        android:text="@string/select_products_info"
+        android:layout_marginEnd="@dimen/large_padding"
+        android:layout_marginTop="@dimen/small_padding"
+        android:text="@string/pending_products_subtitle"
         android:textAppearance="@style/Text.White"
+        android:transitionName="pending_order_subtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="@+id/title"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintRight_toRightOf="@+id/collapsed_orders_title"
+        app:layout_constraintTop_toBottomOf="@+id/collapsed_orders_title" />
 
     <Button
-        android:id="@+id/request_button"
+        android:id="@+id/order_button"
         style="@style/Button.Accent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:clickable="false"
-        android:enabled="false"
+        android:layout_margin="@dimen/large_padding"
         android:text="@string/order"
+        android:transitionName="request_button"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/collapsed_orders_image"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:scaleType="fitCenter"
+        android:transitionName="pending_order_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/order_button"
+        app:layout_constraintRight_toRightOf="@+id/order_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_waiter_color" />
 
 </android.support.constraint.ConstraintLayout>

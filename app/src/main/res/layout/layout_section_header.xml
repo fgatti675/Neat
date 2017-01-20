@@ -7,7 +7,7 @@
 
         <variable
             name="section"
-            type="com.cahue.model.MenuSection" />
+            type="com.neat.model.MenuSection" />
 
         <import type="android.view.View" />
 
@@ -30,7 +30,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/order_title"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingEnd="@dimen/large_padding"

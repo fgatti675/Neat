@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="welcome">Te haremos la vida mas fácil ;) </string>
+
+    <string name="google_sign_in">Login con Google</string>
+    <string name="facebook_sign_in">Login con Facebook</string>
+
+</resources>
+

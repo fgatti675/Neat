@@ -17,24 +17,69 @@
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        tools:context="com.cahue.RestaurantActivity"
+        tools:context="com.neat.RestaurantActivity"
         tools:showIn="@layout/activity_restaurant">
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/orders_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:orientation="vertical"
+            android:elevation="@dimen/default_elevation"
+            android:fillViewport="true"
             app:behavior_peekHeight="@dimen/orders_layout_sneak_peak"
             app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-            <include layout="@layout/layout_orders" />
+            <LinearLayout
+                android:id="@+id/bottom_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"
+                android:orientation="vertical">
+
+                <View
+                    android:id="@+id/border"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/bottom_layout_highlight_height"
+                    android:alpha="0.3"
+                    android:background="#FFF"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <FrameLayout
+                    android:id="@+id/pending_orders_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="@dimen/default_elevation">
+
+                    <include layout="@layout/layout_orders_collapsed" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/requested_orders_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey">
+
+                    <include layout="@layout/layout_requested_orders_empty" />
+
+                </FrameLayout>
+
+            </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/pay_button"
+            style="@style/Button.Accent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/large_padding"
+            android:tint="@color/white"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_banknote" />
 
     </android.support.design.widget.CoordinatorLayout>
 
