@@ -2,9 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/larger_padding"
     android:focusable="true"
     android:orientation="vertical"
-    android:layout_marginTop="@dimen/larger_padding"
     tools:context=".fragments.ItemListSmallFragment">
 
     <include layout="@layout/layout_section_header" />
@@ -17,6 +17,6 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="vertical"
-        tools:listitem="@layout/item_square" />
+        tools:listitem="@layout/item_menu_square" />
 
 </LinearLayout>

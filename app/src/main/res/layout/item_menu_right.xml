@@ -7,15 +7,18 @@
         <variable
             name="item"
             type="com.neat.model.Item" />
-        <variable name="handlers" type="com.neat.util.AddItemToOrdersHandler"/>
+
+        <variable
+            name="handlers"
+            type="com.neat.util.AddItemToOrdersHandler" />
 
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
         android:onClick="@{(view) -> handlers.onItemClick(view, item)}"
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="@dimen/large_padding">
 
         <ImageView
@@ -23,37 +26,39 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="centerCrop"
+            android:transitionName="item_image"
             app:itemImage="@{item}"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/header" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/order_title"
+            android:id="@+id/item_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@{item.name}"
             android:textAppearance="@style/Text.ItemTitle"
-            app:layout_constraintLeft_toRightOf="@+id/item_image"
-            app:layout_constraintRight_toRightOf="parent"
+            android:transitionName="item_title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/item_image"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Ensalada de guacamole, mozarella, tomate y pesto" />
 
         <ImageView
-            android:id="@+id/icon"
+            android:id="@+id/item_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
             android:tint="@color/text_secondary_dark"
             app:itemIcon="@{item}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/item_image"
             app:srcCompat="@drawable/item_fork" />
 
         <TextView
-            android:id="@+id/price"
+            android:id="@+id/item_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_padding"
@@ -66,12 +71,12 @@
 
         <ImageView
             android:id="@+id/add_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="@dimen/large_padding"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:onClick="@{(view) -> handlers.onDirectAddItemButtonClicked(view, item)}"
             android:tint="@color/text_secondary_dark"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/item_image"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:srcCompat="@drawable/ic_add_white" />
 
     </android.support.constraint.ConstraintLayout>

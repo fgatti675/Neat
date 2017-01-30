@@ -18,20 +18,20 @@
         android:id="@+id/order_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="@dimen/tiny_padding"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/tiny_padding"
-        android:paddingEnd="@dimen/tiny_padding"
-        android:transitionName='@{order.item.id + "_view"}'
-        tools:background="@color/colorPrimary">
+        android:transitionName='@{order.item.id + "_view"}'>
 
         <ImageView
-            android:id="@+id/icon"
+            android:id="@+id/item_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="fitCenter"
-            app:itemIcon="@{order.item}"
             android:transitionName='@{order.item.id + "_icon"}'
+            app:itemIcon="@{order.item}"
             tools:src="@drawable/item_fork" />
 
         <TextView
@@ -47,5 +47,4 @@
             tools:visibility="visible" />
 
     </LinearLayout>
-
 </layout>

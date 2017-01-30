@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:layout_marginTop="@dimen/larger_padding"
+    android:orientation="vertical"
     tools:context=".fragments.ItemListSmallFragment">
 
     <include layout="@layout/layout_section_header" />

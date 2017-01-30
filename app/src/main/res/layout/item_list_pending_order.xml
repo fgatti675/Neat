@@ -18,94 +18,94 @@
 
     </data>
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/order_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:gravity="center"
-        android:onClick="@{(view) -> handlers.onOrderClick(view, order)}"
-        android:transitionName='@{order.item.id + "_view"}'
-        android:orientation="horizontal"
-        android:paddingBottom="@dimen/default_padding"
-        android:paddingEnd="@dimen/large_padding"
-        android:paddingStart="@dimen/large_padding"
-        android:paddingTop="@dimen/default_padding"
-        tools:background="@color/colorPrimary">
 
-        <android.support.constraint.Guideline
-            android:id="@+id/title_guideline"
-            android:layout_width="wrap_content"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/order_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="54dp"
-            tools:layout_editor_absoluteX="70dp"
-            tools:layout_editor_absoluteY="0dp" />
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:onClick="@{(view) -> handlers.onOrderClick(view, order)}"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/default_padding"
+            android:paddingEnd="@dimen/large_padding"
+            android:paddingStart="@dimen/large_padding"
+            android:paddingTop="@dimen/default_padding"
+            android:transitionName='@{order.item.id + "_view"}'
+            tools:background="@color/colorPrimary">
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            app:itemIcon="@{order.item}"
-            android:transitionName='@{order.item.id + "_icon"}'
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/item_fork" />
+            <android.support.constraint.Guideline
+                android:id="@+id/title_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="54dp"
+                tools:layout_editor_absoluteX="70dp"
+                tools:layout_editor_absoluteY="0dp" />
 
-        <TextView
-            android:id="@+id/order_count"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/tiny_padding"
-            android:text='@{"x" + order.count}'
-            android:textAppearance="@style/Text.Small.White"
-            android:transitionName='@{order.item.id + "_count"}'
-            android:visibility="@{order.count > 1 ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/icon"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="x2" />
+            <ImageView
+                android:id="@+id/item_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="fitCenter"
+                android:transitionName='@{order.item.id + "_icon"}'
+                app:itemIcon="@{order.item}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/item_fork" />
 
-        <TextView
-            android:id="@+id/order_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/large_padding"
-            android:text="@{order.item.name}"
-            android:textAppearance="@style/Text.White"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/title_guideline"
-            app:layout_constraintRight_toLeftOf="@+id/price"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="1/3 Mahou" />
+            <TextView
+                android:id="@+id/order_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/tiny_padding"
+                android:text='@{"x" + order.count}'
+                android:textAppearance="@style/Text.Small.White"
+                android:transitionName='@{order.item.id + "_count"}'
+                android:visibility="@{order.count > 1 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/item_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="x2" />
 
-        <TextView
-            android:id="@+id/price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Text.Small.White"
-            app:layout_constraintBottom_toBottomOf="@+id/order_title"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintRight_toLeftOf="@+id/remove_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:orderCount="@{order.count}"
-            app:orderItem="@{order.item}"
-            android:layout_marginEnd="@dimen/default_padding"
-            tools:text="2,40€" />
+            <TextView
+                android:id="@+id/item_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/large_padding"
+                android:text="@{order.item.name}"
+                android:textAppearance="@style/Text.White"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/title_guideline"
+                app:layout_constraintRight_toLeftOf="@+id/item_price"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="1/3 Mahou" />
 
-        <ImageView
-            android:id="@+id/remove_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_clear_24dp"
-            android:onClick="@{(view) -> handlers.onOrderRemovedClick(view, order)}"
-            app:layout_constraintBottom_toBottomOf="@+id/order_title"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/default_padding"
+                android:textAppearance="@style/Text.Small.White"
+                app:layout_constraintBottom_toBottomOf="@+id/item_title"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintRight_toLeftOf="@+id/remove_button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:orderCount="@{order.count}"
+                app:orderItem="@{order.item}"
+                tools:text="2,40€" />
 
-    </android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/remove_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{(view) -> handlers.onOrderRemovedClick(view, order)}"
+                app:layout_constraintBottom_toBottomOf="@+id/item_title"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_clear_24dp" />
 
+        </android.support.constraint.ConstraintLayout>
 </layout>

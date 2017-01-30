@@ -15,8 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         android:layout_marginTop="@dimen/larger_padding"
-        android:rotation="180"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:rotation="180"
         android:transitionName="caret"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,23 +41,25 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="@dimen/large_padding"
         android:paddingBottom="@dimen/large_padding"
+        android:paddingTop="@dimen/large_padding"
         android:transitionName="items_layout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pending_orders_title"
         tools:background="@color/light_grey"
-        tools:minHeight="48dp"/>
+        tools:minHeight="48dp" />
 
     <Button
         android:id="@+id/order_button"
         style="@style/Button.Accent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="20dp"
         android:layout_marginEnd="@dimen/large_padding"
-        android:text="@string/order"
         android:layout_marginTop="@dimen/large_padding"
+        android:maxLines="2"
+        android:text="@string/order"
         android:transitionName="request_button"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pending_items_layout" />

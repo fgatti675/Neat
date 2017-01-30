@@ -15,7 +15,6 @@ public class Session implements Serializable {
 
     public List<Order> pendingOrders = new ArrayList<>();
     public List<Order> requestedOrders = new ArrayList<>();
-    public List<Order> deliveredOrders = new ArrayList<>();
 
     public boolean paid;
 
@@ -24,7 +23,7 @@ public class Session implements Serializable {
     }
 
     public boolean hasAnyOrder() {
-        return !pendingOrders.isEmpty() || !requestedOrders.isEmpty() || !deliveredOrders.isEmpty();
+        return !pendingOrders.isEmpty() || !requestedOrders.isEmpty() ;
     }
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/collapsed_orders_layout"
+    android:id="@+id/orders_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
@@ -26,41 +26,38 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="@dimen/large_padding"
-        android:text="@string/pending_products_title"
+        android:text="@string/pending_products_empty"
         android:textAppearance="@style/Text.Header.White"
         android:transitionName="pending_order_title"
         app:layout_constraintBottom_toBottomOf="@+id/caret"
         app:layout_constraintLeft_toRightOf="@+id/caret"
-        app:layout_constraintRight_toLeftOf="@+id/order_button"
+        app:layout_constraintRight_toLeftOf="@+id/collapsed_orders_image"
         app:layout_constraintTop_toTopOf="@+id/caret" />
 
-    <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/pending_items_layout"
+    <TextView
+        android:id="@+id/collapsed_orders_subtitle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="@dimen/large_padding"
         android:layout_marginStart="@dimen/large_padding"
-        android:orientation="horizontal"
-        android:transitionName="items_layout"
-        app:flexWrap="wrap"
+        android:text="@string/pending_products_subtitle"
+        android:textAppearance="@style/Text.White"
+        android:transitionName="pending_order_subtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@+id/collapsed_orders_title"
         app:layout_constraintTop_toBottomOf="@+id/collapsed_orders_title" />
 
-    <Button
-        android:id="@+id/order_button"
-        style="@style/Button.Accent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="160dp"
-        android:layout_marginEnd="@dimen/large_padding"
-        android:padding="20dp"
-        android:maxLines="2"
-        android:text="@string/order"
-        android:transitionName="request_button"
+    <ImageView
+        android:id="@+id/collapsed_orders_image"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:scaleType="fitCenter"
+        android:layout_margin="@dimen/large_padding"
+        android:transitionName="pending_order_image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_waiter_color" />
 
 </android.support.constraint.ConstraintLayout>

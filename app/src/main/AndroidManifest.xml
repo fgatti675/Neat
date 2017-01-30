@@ -6,24 +6,27 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".NeatApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Neat"
-        android:name=".NeatApplication">
+        android:theme="@style/Neat">
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <activity
             android:name=".RestaurantActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Neat.NoActionBar">
+            android:theme="@style/Neat.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
         <activity

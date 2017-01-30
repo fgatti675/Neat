@@ -34,17 +34,6 @@ public class MenuSection implements Serializable {
 
     public List<Item> items = new ArrayList<>();
 
-    /**
-     * Get all best selling items recursively
-     *
-     * @return
-     */
-    public List<Item> getFeaturedItems() {
-        List<Item> featuredItems = new ArrayList<>();
-        for (Item item : items) if (item.featured) featuredItems.add(item);
-        for (MenuSection subsection : subsections)
-            featuredItems.addAll(subsection.getFeaturedItems());
-        return featuredItems;
-    }
+    public List<Item> featuredItems = new ArrayList<>();
 
 }

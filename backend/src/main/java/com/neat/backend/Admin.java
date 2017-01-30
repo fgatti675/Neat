@@ -32,6 +32,7 @@ public class Admin {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         DatabaseReference lateralRef = database.child("restaurants").child("lateral");
+        lateralRef.removeValue();
 
         lateralRef.child("title").setValue("Lateral");
         lateralRef.child("subtitle").setValue("Vive la experiencia");
@@ -46,64 +47,65 @@ public class Admin {
         DatabaseReference drinksRef = addSection(menuRef, "small", "¿Tenéis sed?", "Bebidas", "Nuestros clientes suelen pedir estas bebidas, pero tenemos muchas más");
 
         DatabaseReference beersRef = addSection(drinksRef, null, null, "Cervezas", null);
-        addItem("Copa de Mahou", "31cl.", true, 2.70D, "EUR", null, "glass_small", itemsRef, beersRef);
-        addItem("Doble de Mahou", "50cl.", false, 4.50D, "EUR", null, "brandy_glass", itemsRef, beersRef);
-        addItem("Copa Laiker", "Sin alcohol", false, 2.70D, "EUR", null, "glass_small_alt", itemsRef, beersRef);
-        addItem("1/3 Mahou negra", null, false, 3.35D, "EUR", null, "beer_bottle", itemsRef, beersRef);
-        addItem("1/3 Mahou mixta", null, true, 2.90D, "EUR", null, "beer_bottle", itemsRef, beersRef);
-        addItem("1/3 Mahou light", null, false, 2.90D, "EUR", null, "beer_bottle", itemsRef, beersRef);
-        addItem("1/3 Carlsberg", null, false, 2.90D, "EUR", null, "beer_bottle", itemsRef, beersRef);
-        addItem("1/3 Alhambra", null, false, 3.00D, "EUR", null, "beer_bottle", itemsRef, beersRef);
+        addItem("Copa de Mahou", "31cl.", 2.70D, "EUR", null, "glass_small", itemsRef, drinksRef, beersRef);
+        addItem("Doble de Mahou", "50cl.", 4.50D, "EUR", null, "brandy_glass", itemsRef, null, beersRef);
+        addItem("Copa Laiker", "Sin alcohol", 2.70D, "EUR", null, "glass_small_alt", itemsRef, drinksRef, beersRef);
+        addItem("1/3 Mahou negra", null, 3.35D, "EUR", null, "beer_bottle", itemsRef, null, beersRef);
+        addItem("1/3 Mahou mixta", null, 2.90D, "EUR", null, "beer_bottle", itemsRef, drinksRef, beersRef);
+        addItem("1/3 Mahou light", null, 2.90D, "EUR", null, "beer_bottle", itemsRef, null, beersRef);
+        addItem("1/3 Carlsberg", null, 2.90D, "EUR", null, "beer_bottle", itemsRef, null, beersRef);
+        addItem("1/3 Alhambra", null, 3.00D, "EUR", null, "beer_bottle", itemsRef, drinksRef, beersRef);
 
         DatabaseReference winesRef = addSection(drinksRef, null, null, "Vinos", null);
         DatabaseReference riojasRef = addSection(winesRef, null, null, "Riojas", null);
-        addItem("Casa Viña Real Reserva", null, true, 2.70D, "EUR", null, "wine_glass", itemsRef, riojasRef);
-        addItem("Casa Viña Real Reserva", "50cl.", false, 9.95D, "EUR", null, "wine_glasses", itemsRef, riojasRef);
-        addItem("Casa Viña Real Reserva", "75cl.", false, 13.45D, "EUR", null, "wine_glasses", itemsRef, riojasRef);
-        addItem("Contino Gran Reserva", "75cl.", false, 28.0D, "EUR", null, "wine_glasses", itemsRef, riojasRef);
-        addItem("Copa tinto de verano", null, true, 2.85D, "EUR", null, "glass_small_alt", itemsRef, riojasRef);
+        addItem("Casa Viña Real Reserva", null, 2.70D, "EUR", null, "wine_glass", itemsRef, drinksRef, riojasRef);
+        addItem("Casa Viña Real Reserva", "50cl.", 9.95D, "EUR", null, "wine_glasses", itemsRef, null, riojasRef);
+        addItem("Casa Viña Real Reserva", "75cl.", 13.45D, "EUR", null, "wine_glasses", itemsRef, null, riojasRef);
+        addItem("Contino Gran Reserva", "75cl.", 28.0D, "EUR", null, "wine_glasses", itemsRef, drinksRef, riojasRef);
+        addItem("Copa tinto de verano", null, 2.85D, "EUR", null, "glass_small_alt", itemsRef, null, riojasRef);
         DatabaseReference riberasRef = addSection(winesRef, null, null, "Ribera del Duero", null);
-        addItem("Viña Solorca Reserva", null, false, 3.35D, "EUR", null, "wine_glass", itemsRef, riberasRef);
+        addItem("Viña Solorca Reserva", null, 3.35D, "EUR", null, "wine_glass", itemsRef, null, riberasRef);
         DatabaseReference ruedasRef = addSection(winesRef, null, null, "Rueda", null);
-        addItem("Palacio de Bornos", null, true, 2.60D, "EUR", null, "wine_glass", itemsRef, ruedasRef);
-        addItem("Palacio de Bornos", null, false, 12.60D, "EUR", null, "wine_glasses", itemsRef, ruedasRef);
+        addItem("Palacio de Bornos", null, 2.60D, "EUR", null, "wine_glass", itemsRef, null, ruedasRef);
+        addItem("Palacio de Bornos", null, 12.60D, "EUR", null, "wine_glasses", itemsRef, drinksRef, ruedasRef);
 
         DatabaseReference featuredRef = addSection(menuRef, "featured", "Hoy te recomendamos", "Recomendados", "Disfruta con lo que hemos preparado hoy especial para ti");
 
         DatabaseReference pinchosRef = addSection(menuRef, "list", null, "Pinchos", null);
-        
-        addItem("Arroz negro con chipirones", null, false, 3.60D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Arroz-negro-con-chipirones.jpeg", "octopus", itemsRef, featuredRef, pinchosRef);
-        addItem("Magret de Pato con Chutney de Piña y Mango", null, false, 3.90D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Magret-de-Pato-con-Chutney-de-Pin%CC%83a-y-Mango.jpg", "duck", itemsRef, featuredRef, pinchosRef);
-        addItem("Morcilla con patata paja con yema de huevo de corral", null, false, 4.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Morcilla-con-patata-paja-con-yema-de-huevo-de-corral.jpeg", "eggs", itemsRef, featuredRef, pinchosRef);
 
-        addItem("Picaña de ternera", null, false, 4.20D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Pican%CC%83a-de-ternera.jpg", "steak", itemsRef, pinchosRef);
-        addItem("Quesadilla de Tortilla de Trigo con Pollo Jalapeño Queso Emmental y Salsa de Tomate Verde", null, false, 3.70D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Quesadilla-de-Tortilla-de-Trigo-con-Pollo-Jalapen%CC%83o-Queso-Emmental-y-Salsa-de-Tomate-Verde.jpg", null, itemsRef, pinchosRef);
-        addItem("Ravioli de espinacas con salsa de queso de cabra pasas y piñones", null, false, 3.90D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Ravioli-de-espinacas-con-salsa-de-queso-de-cabra-pasas-y-pin%CC%83ones.jpg.jpg", null, itemsRef, pinchosRef);
-        addItem("Capón relleno con salteado de ñoquis", null, false, 3.90D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Capon-relleno.jpg", null, itemsRef, pinchosRef);
-        addItem("Tagliatelle salteado con verduras y pesto de tomates secos", null, false, 3.50D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Tagliatelle-salteado-con-verdura-3.jpg", null, itemsRef, pinchosRef);
-        addItem("Arroz meloso con gambas al ajillo", null, false, 3.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Arroz-meloso-con-gambas-al-ajillo-1.jpg", null, itemsRef, pinchosRef);
-        addItem("Bao-bun relleno de panceta asada en su jugo y salsa Hoisin", null, false, 4.20D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/SUGERENCIA-ARTURO-SORIA-bao-bun-relleno-de-panceta.jpg", "bao-bun", itemsRef, pinchosRef);
-        addItem("Lasaña de verduras", null, false, 4.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Lasan%CC%83a-de-verduras-NUEVO.jpg", null, itemsRef, pinchosRef);
-        addItem("Mollete de romero", null, false, 3.80D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Mollete-de-romero.jpg", "hamburger", itemsRef, pinchosRef);
-        addItem("Cerviche de merluza", null, false, 5.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Cerviche-de-merluza-1.jpg", null, itemsRef, pinchosRef);
-        addItem("Albóndigas de merluza", null, false, 4.20D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Racio%CC%81n-de-albondigas-de-merluza-NUEVO.jpg", null, itemsRef, pinchosRef);
-        addItem("Hamburguesa de buey", null, false, 4.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Hamburguesa-de-buey-e1464178621459.jpg", "hamburger", itemsRef, pinchosRef);
+        addItem("Arroz negro con chipirones", null, 3.60D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Arroz-negro-con-chipirones.jpeg", "octopus", itemsRef, null, featuredRef, pinchosRef);
+        addItem("Magret de Pato con Chutney de Piña y Mango", null, 3.90D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Magret-de-Pato-con-Chutney-de-Pin%CC%83a-y-Mango.jpg", "duck", itemsRef, null, featuredRef, pinchosRef);
+        addItem("Morcilla con patata paja con yema de huevo de corral", null, 4.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Morcilla-con-patata-paja-con-yema-de-huevo-de-corral.jpeg", "eggs", itemsRef, null, featuredRef, pinchosRef);
+
+        addItem("Picaña de ternera", null, 4.20D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Pican%CC%83a-de-ternera.jpg", "steak", itemsRef, null, pinchosRef);
+        addItem("Quesadilla de Tortilla de Trigo con Pollo Jalapeño Queso Emmental y Salsa de Tomate Verde", null, 3.70D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Quesadilla-de-Tortilla-de-Trigo-con-Pollo-Jalapen%CC%83o-Queso-Emmental-y-Salsa-de-Tomate-Verde.jpg", "taco", itemsRef, null, pinchosRef);
+        addItem("Ravioli de espinacas con salsa de queso de cabra pasas y piñones", null, 3.90D, "EUR", "http://www.lateral.com/wp-content/uploads/2015/05/Ravioli-de-espinacas-con-salsa-de-queso-de-cabra-pasas-y-pin%CC%83ones.jpg.jpg", "ravioli", itemsRef, null, pinchosRef);
+        addItem("Capón relleno con salteado de ñoquis", null, 3.90D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Capon-relleno.jpg", "gnocchi", itemsRef, null, pinchosRef);
+        addItem("Tagliatelle salteado con verduras y pesto de tomates secos", null, 3.50D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Tagliatelle-salteado-con-verdura-3.jpg", null, itemsRef, null, pinchosRef);
+        addItem("Arroz meloso con gambas al ajillo", null, 3.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Arroz-meloso-con-gambas-al-ajillo-1.jpg", "shrimp", itemsRef, null, pinchosRef);
+        addItem("Bao-bun relleno de panceta asada en su jugo y salsa Hoisin", null, 4.20D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/SUGERENCIA-ARTURO-SORIA-bao-bun-relleno-de-panceta.jpg", "bao_bun", itemsRef, null, pinchosRef);
+        addItem("Lasaña de verduras", null, 4.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Lasan%CC%83a-de-verduras-NUEVO.jpg", "lasagna", itemsRef, null, pinchosRef);
+        addItem("Mollete de romero", null, 3.80D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Mollete-de-romero.jpg", "burger", itemsRef, null, pinchosRef);
+        addItem("Cerviche de merluza", null, 5.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Cerviche-de-merluza-1.jpg", null, itemsRef, null, pinchosRef);
+        addItem("Albóndigas de merluza", null, 4.20D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Racio%CC%81n-de-albondigas-de-merluza-NUEVO.jpg", "meatballs", itemsRef, null, pinchosRef);
+        addItem("Hamburguesa de buey", null, 4.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Hamburguesa-de-buey-e1464178621459.jpg", "hamburger", itemsRef, null, pinchosRef);
 
         Thread.sleep(5000);
 
     }
 
-    private static DatabaseReference addItem(String name, String description, boolean featured, double price, String currency, String imageUrl, String icon, DatabaseReference itemsRef, DatabaseReference... sectionRefs) {
+    private static DatabaseReference addItem(String name, String description,  double price, String currency, String imageUrl, String icon, DatabaseReference itemsRef, DatabaseReference featuredRef, DatabaseReference... sectionRefs) {
         DatabaseReference reference = itemsRef.push();
         reference.child("name").setValue(name);
         reference.child("description").setValue(description);
-        reference.child("featured").setValue(featured);
         reference.child("price").setValue(price);
         reference.child("currency").setValue(currency);
         reference.child("icon").setValue(icon);
         reference.child("imageUrl").setValue(imageUrl);
-        for (DatabaseReference sectionRef : sectionRefs)
+        for (DatabaseReference sectionRef : sectionRefs) {
             sectionRef.child("items").child(reference.getKey()).setValue(true);
+        }
+        if (featuredRef != null) featuredRef.child("featuredItems").child(reference.getKey()).setValue(true);
         return reference;
     }
 

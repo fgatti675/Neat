@@ -1,7 +1,6 @@
 package com.neat.dagger;
 
 import com.neat.RestaurantProvider;
-import com.neat.RestaurantProviderMock;
 
 import javax.inject.Singleton;
 
@@ -14,6 +13,6 @@ public class RestaurantModule {
     @Provides
     @Singleton
     RestaurantProvider providesRestaurantProvider() {
-        return new RestaurantProviderMock();
+        return new RestaurantProvider();
     }
 }

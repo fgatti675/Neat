@@ -1,6 +1,7 @@
 package com.neat.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -8,8 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.neat.NeatApplication;
 import com.neat.R;
-import com.neat.databinding.ItemListRightBinding;
+import com.neat.RestaurantActivity;
+import com.neat.SessionManager;
+import com.neat.databinding.ItemMenuRightBinding;
 import com.neat.databinding.LayoutSectionHeaderBinding;
 import com.neat.model.Item;
 import com.neat.model.MenuSection;
@@ -17,14 +21,21 @@ import com.neat.util.AddItemToOrdersHandler;
 
 import java.util.Iterator;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ItemListFragment extends Fragment {
+public class ItemListFragment extends Fragment implements AddItemToOrdersHandler {
 
     private static final String ARG_SECTION = "ARG_SECTION";
 
+    RestaurantActivity restaurantActivity;
+
     MenuSection section;
+
+    @Inject
+    SessionManager sessionManager;
 
     @Bind(R.id.header)
     View header;
@@ -38,6 +49,16 @@ public class ItemListFragment extends Fragment {
         ItemListFragment fragment = new ItemListFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof RestaurantActivity)) {
+            throw new RuntimeException("This fragment must be created in a RestaurantActivity");
+        }
+        restaurantActivity = (RestaurantActivity) context;
+        NeatApplication.getComponent(context).inject(this);
     }
 
     public ItemListFragment() {
@@ -62,9 +83,9 @@ public class ItemListFragment extends Fragment {
         Iterator<Item> iterator = section.items.iterator();
         while (iterator.hasNext()) {
             Item item = iterator.next();
-            ItemListRightBinding itemTagBinding = ItemListRightBinding.inflate(inflater);
+            ItemMenuRightBinding itemTagBinding = ItemMenuRightBinding.inflate(inflater);
             itemTagBinding.setItem(item);
-            itemTagBinding.setHandlers(new AddItemToOrdersHandler());
+            itemTagBinding.setHandlers(this);
             this.container.addView(itemTagBinding.getRoot());
 
             if (iterator.hasNext()) {
@@ -76,4 +97,13 @@ public class ItemListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onItemClick(View view, Item item) {
+        restaurantActivity.displayItemDetailsView(view, item);
+    }
+
+    @Override
+    public void onDirectAddItemButtonClicked(View view, Item item) {
+        sessionManager.addPendingItem(item, 1);
+    }
 }

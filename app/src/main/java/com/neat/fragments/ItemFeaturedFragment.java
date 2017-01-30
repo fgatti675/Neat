@@ -1,6 +1,7 @@
 package com.neat.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,18 +10,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.neat.NeatApplication;
 import com.neat.R;
-import com.neat.databinding.ItemSquareBinding;
+import com.neat.RestaurantActivity;
+import com.neat.SessionManager;
+import com.neat.databinding.ItemMenuSquareBinding;
 import com.neat.databinding.LayoutSectionHeaderBinding;
+import com.neat.model.Item;
 import com.neat.model.MenuSection;
 import com.neat.util.AddItemToOrdersHandler;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ItemFeaturedFragment extends Fragment {
+public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHandler {
 
     private static final String ARG_SECTION = "ARG_SECTION";
+
+    RestaurantActivity restaurantActivity;
+
+    MenuSection section;
+
+    @Inject
+    SessionManager sessionManager;
 
     @Bind(R.id.header)
     View header;
@@ -28,14 +42,22 @@ public class ItemFeaturedFragment extends Fragment {
     @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    MenuSection section;
-
     public static ItemFeaturedFragment newInstance(MenuSection section) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_SECTION, section);
         ItemFeaturedFragment fragment = new ItemFeaturedFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof RestaurantActivity)) {
+            throw new RuntimeException("This fragment must be created in a RestaurantActivity");
+        }
+        restaurantActivity = (RestaurantActivity) context;
+        NeatApplication.getComponent(context).inject(this);
     }
 
     public ItemFeaturedFragment() {
@@ -67,37 +89,49 @@ public class ItemFeaturedFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onItemClick(View view, Item item) {
+        restaurantActivity.displayItemDetailsView(view, item);
+    }
 
-    private class Adapter extends RecyclerView.Adapter<ItemViewHolder>{
+    @Override
+    public void onDirectAddItemButtonClicked(View view, Item item) {
+        sessionManager.addPendingItem(item, 1);
+    }
+
+
+    private class Adapter extends RecyclerView.Adapter<ItemViewHolder> {
 
         @Override
         public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ItemViewHolder viewHolder = new ItemViewHolder(ItemSquareBinding.inflate(LayoutInflater.from(parent.getContext())));
+            ItemViewHolder viewHolder = new ItemViewHolder(ItemMenuSquareBinding.inflate(LayoutInflater.from(parent.getContext())));
             return viewHolder;
         }
 
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
-            ItemSquareBinding binding = holder.getBinding();
+            ItemMenuSquareBinding binding = holder.getBinding();
             binding.setItem(section.items.get(position));
-            binding.setHandlers(new AddItemToOrdersHandler());
+            binding.setHandlers(ItemFeaturedFragment.this);
         }
 
         @Override
         public int getItemCount() {
             return section.items.size();
         }
+
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
-        private ItemSquareBinding binding;
 
-        public ItemViewHolder(ItemSquareBinding binding) {
+        private ItemMenuSquareBinding binding;
+
+        public ItemViewHolder(ItemMenuSquareBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        public ItemSquareBinding getBinding() {
+        public ItemMenuSquareBinding getBinding() {
             return binding;
         }
     }

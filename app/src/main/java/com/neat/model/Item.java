@@ -11,11 +11,10 @@ public class Item implements Serializable {
     public Item() {
     }
 
-    public Item(String id, String name, String description, boolean featured, float price, String currency, String icon, String imageUrl) {
+    public Item(String id, String name, String description, float price, String currency, String icon, String imageUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.featured = featured;
         this.price = price;
         this.currency = currency;
         this.icon = icon;

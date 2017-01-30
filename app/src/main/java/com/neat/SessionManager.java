@@ -15,17 +15,18 @@ import java.util.List;
 
 public class SessionManager {
 
-    public interface OnOrdersPlacedListener{
-        void onOrdersPlaced(List<Order> newlyPlacedOrders);
+    public interface OnNewPendingOrderAddedListener {
+        void onNewPendingOrderAdded(Order order, boolean isOrderNew);
     }
 
-    public interface OnOrdersDeliveredListener{
-        void onOrdersDelivered(List<Order> newlyPlacedOrders);
+    public interface OnOrdersPlacedListener {
+        void onOrdersPlaced(List<Order> newlyPlacedOrders);
     }
 
     private Session session;
 
     private List<OnOrdersPlacedListener> onOrdersPlacedListeners = new LinkedList<>();
+    private List<OnNewPendingOrderAddedListener> onNewPendingOrderAddedListeners = new LinkedList<>();
 
     public void newSession(Restaurant restaurant) {
 
@@ -40,23 +41,31 @@ public class SessionManager {
     }
 
 
-    public Order requestItem(Item item) {
+    public Order addPendingItem(Item item, int count) {
 
         Order order = null;
+        boolean isOrderNew = false;
 
         for (Order prevOrder : session.pendingOrders) {
             // item is already in the pending queue
             if (prevOrder.item.equals(item)) {
                 order = prevOrder;
-                order.incrementCount();
+                for (int i = 0; i < count; i++) {
+                    order.incrementCount();
+                }
             }
         }
 
         if (order == null) {
             order = new Order();
             order.item = item;
-            order.count = 1;
+            order.count = count;
             session.pendingOrders.add(order);
+            isOrderNew = true;
+        }
+
+        for (OnNewPendingOrderAddedListener listener : onNewPendingOrderAddedListeners) {
+            listener.onNewPendingOrderAdded(order, isOrderNew);
         }
 
         return order;
@@ -110,10 +119,19 @@ public class SessionManager {
         for (Order order : session.requestedOrders) {
             sum += order.getCount() * order.item.price;
         }
-        for (Order order : session.deliveredOrders) {
-            sum += order.getCount() * order.item.price;
-        }
         return sum;
+    }
+
+    public int getPendingItemsCount(){
+        int i = 0;
+        for (Order order : session.pendingOrders) {
+            i += order.getCount();
+        }
+        return i;
+    }
+
+    public List<Order> getPendingOrders(){
+        return session.pendingOrders;
     }
 
     public String getCurrency() {
@@ -126,6 +144,18 @@ public class SessionManager {
 
     public void removeOnOrdersPlacedListener(OnOrdersPlacedListener e) {
         onOrdersPlacedListeners.remove(e);
+    }
+
+    public void addOnNewPendingOrderAddedListener(OnNewPendingOrderAddedListener e) {
+        onNewPendingOrderAddedListeners.add(e);
+    }
+
+    public void removeOnNewPendingOrderAddedListener(OnNewPendingOrderAddedListener e) {
+        onNewPendingOrderAddedListeners.remove(e);
+    }
+
+    public boolean hasSessionStarted() {
+        return session != null;
     }
 
 }

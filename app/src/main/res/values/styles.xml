@@ -17,16 +17,18 @@
     <style name="Neat.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
 
     <style name="Neat.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Button" parent="Widget.AppCompat.Button">
-    </style>
+    <style name="Button" parent="Widget.AppCompat.Button" />
 
-    <style name="Button.Accent" >
+    <style name="Button.Accent">
         <item name="android:textColor">@color/white</item>
-        <item name="android:background">@color/colorAccent</item>
+        <item name="android:backgroundTint">@color/colorAccent</item>
     </style>
 
     <style name="Button.Google">
@@ -136,15 +138,26 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="Text.ExpandedTitle" parent="TextAppearance.AppCompat.Display2">
-        <item name="android:textColor">@color/white</item>
+    <style name="Text.Display" parent="TextAppearance.AppCompat.Display2">
+    </style>
+
+    <style name="Text.Display.Monospace" >
         <item name="android:fontFamily">monospace</item>
-        <item name="android:background">@color/light_grey</item>
+    </style>
+
+    <style name="Text.Display.Monospace.White" >
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="Text.Secondary">
         <item name="android:textColor">@color/text_secondary_dark</item>
         <!--<item name="android:textStyle">bold</item>-->
+    </style>
+
+    <style name="Tooltip">
+        <item name="ttlm_backgroundColor">@color/colorAccentAlt</item>
+        <item name="ttlm_padding">@dimen/larger_padding</item>
+        <item name="android:textAppearance">@style/Text.White</item>
     </style>
 
 </resources>

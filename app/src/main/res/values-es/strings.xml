@@ -19,4 +19,8 @@
     <string name="loading">Cargando</string>
     <string name="log_out">Desconectar</string>
     <string name="table_participants">En la mesa %1$s %2$s</string>
+    <string name="add_to_pending_orders">Añadir a cola de pedidos</string>
+    <string name="orders_button_tooltip">Pulsa este boton para confirmar tu orden</string>
+    <string name="order_num_items">Pedir %d elementos</string>
+    <string name="add_a_note">Añade una note (sin picante, extra de salsa…)</string>
 </resources>

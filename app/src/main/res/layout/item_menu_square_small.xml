@@ -30,14 +30,16 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
+            android:transitionName="item_image"
             app:itemImage="@{item}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@color/colorAccentAlt" />
 
         <ImageView
-            android:id="@+id/icon"
+            android:id="@+id/item_icon"
             android:layout_width="@dimen/small_icon"
             android:layout_height="@dimen/small_icon"
             android:layout_marginBottom="8dp"
@@ -48,7 +50,7 @@
             app:srcCompat="@drawable/item_apple" />
 
         <TextView
-            android:id="@+id/price"
+            android:id="@+id/item_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -56,18 +58,19 @@
             android:textAppearance="@style/Text.Small.White.SemiTransparent"
             app:itemPrice="@{item}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/icon"
+            app:layout_constraintLeft_toRightOf="@+id/item_icon"
             tools:text="2,40€" />
 
         <TextView
-            android:id="@+id/order_title"
+            android:id="@+id/item_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:maxLines="5"
             android:text="@{item.name}"
             android:textAppearance="@style/Text.White"
-            app:layout_constraintBottom_toTopOf="@+id/price"
+            android:transitionName="item_title"
+            app:layout_constraintBottom_toTopOf="@+id/item_price"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             tools:text="Ensalada de guacamole, mozarella, tomate y pesto" />
@@ -75,10 +78,12 @@
         <ImageButton
             android:id="@+id/add_button"
             style="@style/Base.Widget.AppCompat.Button.Borderless"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
+            android:onClick="@{(view) -> handlers.onDirectAddItemButtonClicked(view, item)}"
+            android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:srcCompat="@drawable/ic_add_white" />

@@ -16,6 +16,8 @@ public class Order extends BaseObservable implements Serializable {
 
     public int count;
 
+    public String specialInstructions;
+
     @Bindable
     public int getCount() {
         return count;
@@ -44,7 +46,8 @@ public class Order extends BaseObservable implements Serializable {
         Order order = (Order) o;
 
         if (count != order.count) return false;
-        return item != null ? item.equals(order.item) : order.item == null;
+        if (item != null ? !item.equals(order.item) : order.item != null) return false;
+        return specialInstructions != null ? specialInstructions.equals(order.specialInstructions) : order.specialInstructions == null;
 
     }
 
@@ -52,6 +55,7 @@ public class Order extends BaseObservable implements Serializable {
     public int hashCode() {
         int result = item != null ? item.hashCode() : 0;
         result = 31 * result + count;
+        result = 31 * result + (specialInstructions != null ? specialInstructions.hashCode() : 0);
         return result;
     }
 }

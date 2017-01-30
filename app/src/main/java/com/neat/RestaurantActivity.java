@@ -9,10 +9,12 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,15 +26,22 @@ import com.neat.fragments.ItemFeaturedFragment;
 import com.neat.fragments.ItemListFragment;
 import com.neat.fragments.ItemListSmallFragment;
 import com.neat.fragments.OrdersFragment;
+import com.neat.model.Item;
 import com.neat.model.MenuSection;
+import com.neat.model.Order;
 import com.neat.model.Restaurant;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class RestaurantActivity extends AppCompatActivity implements RestaurantProvider.Callback {
+public class RestaurantActivity extends AppCompatActivity
+        implements RestaurantProvider.Callback,
+        ItemDetailsFragment.OnItemDetailsClosedListener,
+        SessionManager.OnOrdersPlacedListener {
 
     private static final String TAG = RestaurantActivity.class.getSimpleName();
 
@@ -61,8 +70,8 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
     @Bind(R.id.header)
     ImageView header;
 
-    @Bind(R.id.pay_button)
-    Button payButton;
+//    @Bind(R.id.pay_button)
+//    Button payButton;
 
     @Bind(R.id.subtitle)
     TextView subtitle;
@@ -80,6 +89,10 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
     AppBarLayout appBarLayout;
 
     private Restaurant restaurant;
+
+    private ItemDetailsFragment itemDetailsFragment;
+    private View payAction;
+    private View menuAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +129,9 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
             }
         });
 
-        final View payAction = toolbar.findViewById(R.id.action_pay);
-        final View menuAction = toolbar.findViewById(R.id.action_menu);
+        payAction = toolbar.findViewById(R.id.action_pay);
+        payAction.setVisibility(View.GONE);
+        menuAction = toolbar.findViewById(R.id.action_menu);
 
 //        final float offsetX = getResources().getDimension(R.dimen.pay_button_toolbar_offset_x_collapsed);
 //        final float offsetY = getResources().getDimension(R.dimen.pay_button_toolbar_offset_y_expanded);
@@ -132,7 +146,7 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
 //                float translationY = scrollPercentage * -offsetY;
 //                payButton.setTranslationX(translationX);
 //                payButton.setTranslationY(translationY);
-                payButton.setAlpha(scrollPercentage);
+//                payButton.setAlpha(scrollPercentage);
                 payAction.setAlpha(1 - scrollPercentage);
                 menuAction.setAlpha(1 - scrollPercentage);
 
@@ -146,7 +160,10 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
                 if (scrollPercentage < .1) return;
 
                 // display orders layout based on scroll
-                ordersFragment.setBottomSheetDisplayedIfHasOrders(scrollPercentage < .5);
+                if (scrollPercentage < .5)
+                    ordersFragment.setBottomSheetCollapsedIfHasOrders();
+                else
+                    ordersFragment.setStateHidden();
 
             }
         });
@@ -164,6 +181,14 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
         super.onStart();
         if (restaurant == null)
             restaurantProvider.getRestaurant("lateral", this);
+
+        sessionManager.addOnOrdersPlacedListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        sessionManager.removeOnOrdersPlacedListener(this);
     }
 
     @Override
@@ -173,7 +198,7 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
 
         sessionManager.newSession(restaurant);
 
-        ordersFragment.setBottomSheetDisplayedIfHasOrders(false);
+        ordersFragment.setStateHidden();
 
         Glide.with(this).load(restaurant.headerUrl)
                 .centerCrop()
@@ -207,7 +232,7 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
             }
 
         }
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
 
 //        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 //            // get the center for the clipping circle
@@ -228,7 +253,9 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
 
     @Override
     public void onBackPressed() {
-        if (ordersFragment.isExpanded())
+        if (itemDetailsFragment != null && itemDetailsFragment.isAdded())
+            onItemDetailsClosedRequested();
+        else if (ordersFragment.isExpanded())
             ordersFragment.setStateCollapsed();
         else
             super.onBackPressed();
@@ -244,5 +271,48 @@ public class RestaurantActivity extends AppCompatActivity implements RestaurantP
         mAuth.signOut();
         LoginManager.getInstance().logOut();
         goToLogin();
+    }
+
+    public void displayItemDetailsView(View view, Item item) {
+
+        mainSectionsContainer.setFitsSystemWindows(true);
+
+        ordersFragment.hideOrdersButton();
+        ordersFragment.discardOrdersButtonTooltip();
+
+        final FragmentManager fragmentManager = getFragmentManager();
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        itemDetailsFragment = ItemDetailsFragment.newInstance(item);
+        itemDetailsFragment.setOnItemDetailsClosedListener(this);
+//        fragment.setSharedElementEnterTransition(new AutoTransition());
+        itemDetailsFragment.setEnterTransition(new Slide(Gravity.END));
+        transaction.addSharedElement(view.findViewById(R.id.item_title), "item_title");
+        transaction.addSharedElement(view.findViewById(R.id.item_image), "item_image");
+        transaction.replace(R.id.main_layout, itemDetailsFragment, null);
+        transaction.addToBackStack("item_details");
+        transaction.commitAllowingStateLoss();
+    }
+
+    public void onItemDetailsClosedRequested() {
+        mainSectionsContainer.setFitsSystemWindows(true);
+        getFragmentManager().popBackStack();
+        ordersFragment.displayOrdersButton();
+    }
+
+    @Override
+    public void onOrdersPlaced(List<Order> newlyPlacedOrders) {
+        /*
+         * Reveal pay action
+         */
+        if (payAction.getVisibility() != View.VISIBLE) {
+            payAction.setVisibility(View.VISIBLE);
+            ViewAnimationUtils.createCircularReveal(
+                    payAction,
+                    payAction.getMeasuredWidth() / 2,
+                    payAction.getMeasuredHeight() / 2, 0,
+                    Math.max(payAction.getWidth(), payAction.getHeight()) / 2)
+                    .start();
+        }
     }
 }

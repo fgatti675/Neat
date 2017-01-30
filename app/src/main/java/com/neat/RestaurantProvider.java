@@ -86,6 +86,9 @@ public class RestaurantProvider {
         for (DataSnapshot child : dataSnapshot.child("items").getChildren()) {
             section.items.add(items.get(child.getKey()));
         }
+        for (DataSnapshot child : dataSnapshot.child("featuredItems").getChildren()) {
+            section.featuredItems.add(items.get(child.getKey()));
+        }
         for (DataSnapshot child : dataSnapshot.child("sections").getChildren()) {
             section.subsections.add(extractSection(child, items));
         }

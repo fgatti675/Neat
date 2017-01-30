@@ -7,4 +7,4 @@
     android:layout_marginEnd="@dimen/large_padding"
     android:layout_marginStart="@dimen/large_padding"
     android:background="@color/translucent_grey"
-    tools:showIn="@layout/item_list" />
+    tools:showIn="@layout/item_menu_left" />

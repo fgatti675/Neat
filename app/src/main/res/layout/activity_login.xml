@@ -21,29 +21,29 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
         android:layout_gravity="center"
-        android:background="@color/colorPrimary">
+        android:layout_weight="1"
+        android:background="@color/colorPrimary"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <Button
-            android:background="@color/facebook_blue"
             android:id="@+id/button_facebook_login"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/facebook_blue"
             android:text="@string/facebook_sign_in"
-            android:theme="@style/Button.Facebook"
-            android:layout_weight="1" />
+            android:theme="@style/Button.Facebook" />
 
         <Button
-            android:background="@color/google_red"
             android:id="@+id/google_sign_in_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/google_red"
             android:text="@string/google_sign_in"
-            android:theme="@style/Button.Google"
-            android:layout_weight="1" />
+            android:theme="@style/Button.Google" />
 
     </LinearLayout>
 

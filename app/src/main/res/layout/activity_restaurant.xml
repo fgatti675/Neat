@@ -5,129 +5,135 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/coordinator_layout"
+    <FrameLayout
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:context="com.neat.RestaurantActivity">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/app_bar"
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinator_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:elevation="2dp"
             android:fitsSystemWindows="true"
-            android:theme="@style/Neat.AppBarOverlay">
+            tools:context="com.neat.RestaurantActivity">
 
-            <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/toolbar_layout"
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:elevation="2dp"
                 android:fitsSystemWindows="true"
-                android:paddingBottom="100dp"
-                app:collapsedTitleTextAppearance="@style/Text.Title.White.Mono"
-                app:contentScrim="@color/background_dark"
-                app:expandedTitleGravity="center"
-                app:expandedTitleTextAppearance="@style/Text.ExpandedTitle"
-                app:layout_scrollFlags="scroll|enterAlwaysCollapsed|enterAlways|snap"
-                app:statusBarScrim="@color/background_super_dark"
-                app:expandedTitleMarginBottom="140dp"
-                app:title="Lateral">
+                android:theme="@style/Neat.AppBarOverlay">
 
-                <ImageView
-                    android:id="@+id/header"
+                <android.support.design.widget.CollapsingToolbarLayout
+                    android:id="@+id/toolbar_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:fitsSystemWindows="true"
-                    android:scaleType="centerCrop"
-                    app:layout_collapseMode="parallax" />
+                    android:paddingBottom="100dp"
+                    app:collapsedTitleTextAppearance="@style/Text.Title.White.Mono"
+                    app:contentScrim="@color/background_dark"
+                    app:expandedTitleGravity="center"
+                    app:expandedTitleMarginBottom="140dp"
+                    app:expandedTitleTextAppearance="@style/Text.Display.Monospace.White"
+                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed|enterAlways|snap"
+                    app:statusBarScrim="@color/background_super_dark"
+                    app:title="Lateral">
 
-                <View
-                    android:id="@+id/header_scrim"
-                    android:layout_width="match_parent"
-                    android:layout_height="450dp"
-                    android:layout_gravity="bottom"
-                    android:background="@drawable/image_shadow" />
+                    <ImageView
+                        android:id="@+id/header"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="centerCrop"
+                        app:layout_collapseMode="parallax" />
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:elevation="@dimen/default_elevation"
-                    app:layout_collapseMode="pin" />
+                    <View
+                        android:id="@+id/header_scrim"
+                        android:layout_width="match_parent"
+                        android:layout_height="450dp"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/bg_image_shadow" />
 
-                <TextView
-                    android:id="@+id/subtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="60dp"
-                    android:gravity="center"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:textAppearance="@style/Text.Title.White"
-                    app:layout_collapseMode="parallax"
-                    tools:text="Vive la experiencia" />
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:elevation="@dimen/default_elevation"
+                        app:layout_collapseMode="pin" />
 
-                <Button
-                    android:id="@+id/pay_button"
-                    style="@style/Button.Accent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="@string/pay"
-                    android:translationY="-8dp"
-                    android:visibility="gone"
-                    app:layout_collapseMode="none" />
+                    <TextView
+                        android:id="@+id/subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="60dp"
+                        android:gravity="center"
+                        android:paddingEnd="16dp"
+                        android:paddingStart="16dp"
+                        android:textAppearance="@style/Text.Title.White"
+                        app:layout_collapseMode="parallax"
+                        tools:text="Vive la experiencia" />
 
-                <ImageView
-                    android:id="@+id/header_caret"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_gravity="bottom|center"
-                    android:layout_marginBottom="@dimen/default_padding"
-                    android:rotation="180"
-                    app:layout_collapseMode="none"
-                    app:srcCompat="@drawable/ic_caret_up_white" />
+                    <Button
+                        android:id="@+id/pay_button"
+                        style="@style/Button.Accent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginEnd="16dp"
+                        android:text="@string/pay"
+                        android:translationY="-8dp"
+                        android:visibility="gone"
+                        app:layout_collapseMode="none" />
 
-            </android.support.design.widget.CollapsingToolbarLayout>
+                    <ImageView
+                        android:id="@+id/header_caret"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="bottom|center"
+                        android:layout_marginBottom="@dimen/default_padding"
+                        android:rotation="180"
+                        app:layout_collapseMode="none"
+                        app:srcCompat="@drawable/ic_caret_up_white" />
 
-        </android.support.design.widget.AppBarLayout>
+                </android.support.design.widget.CollapsingToolbarLayout>
 
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/main_scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/light_grey"
-            app:behavior_overlapTop="100dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-            <!--app:behavior_overlapTop="100dp"-->
+            </android.support.design.widget.AppBarLayout>
 
-            <LinearLayout
-                android:id="@+id/main_sections_container"
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/main_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/orders_layout_sneak_peak">
+                android:layout_height="match_parent"
+                android:background="@color/light_grey"
+                app:behavior_overlapTop="100dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <include layout="@layout/table_details_layout" />
+                <LinearLayout
+                    android:id="@+id/main_sections_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/orders_layout_sneak_peak">
 
-            </LinearLayout>
+                    <include layout="@layout/table_details_layout" />
 
-        </android.support.v4.widget.NestedScrollView>
+                </LinearLayout>
 
-    </android.support.design.widget.CoordinatorLayout>
+            </android.support.v4.widget.NestedScrollView>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+
+    </FrameLayout>
 
     <fragment
         android:id="@+id/orders_fragment"
         android:name="com.neat.fragments.OrdersFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:tag="ORDERS_FRAGMENT"
         tools:layout="@layout/fragment_orders" />
 
 </FrameLayout>
