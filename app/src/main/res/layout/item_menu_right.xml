@@ -28,6 +28,7 @@
             android:scaleType="centerCrop"
             android:transitionName="item_image"
             app:itemImage="@{item}"
+            tools:background="@color/colorAccent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -47,14 +48,24 @@
             tools:text="Ensalada de guacamole, mozarella, tomate y pesto" />
 
         <ImageView
+            android:id="@+id/add_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:onClick="@{(view) -> handlers.onDirectAddItemButtonClicked(view, item)}"
+            android:tint="@color/text_secondary_dark"
+            android:layout_marginEnd="@dimen/small_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/item_image"
+            app:srcCompat="@drawable/ic_add_white" />
+
+        <ImageView
             android:id="@+id/item_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
             android:tint="@color/text_secondary_dark"
             app:itemIcon="@{item}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/item_image"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:srcCompat="@drawable/item_fork" />
 
         <TextView
@@ -65,19 +76,9 @@
             android:textAppearance="@style/Text.Secondary"
             app:itemPrice="@{item}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/add_button"
-            app:layout_constraintTop_toTopOf="@+id/add_button"
+            app:layout_constraintLeft_toRightOf="@+id/item_icon"
+            app:layout_constraintTop_toTopOf="@+id/item_icon"
             tools:text="2,40€" />
-
-        <ImageView
-            android:id="@+id/add_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:onClick="@{(view) -> handlers.onDirectAddItemButtonClicked(view, item)}"
-            android:tint="@color/text_secondary_dark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:srcCompat="@drawable/ic_add_white" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

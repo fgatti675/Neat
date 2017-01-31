@@ -29,8 +29,6 @@
                 android:id="@+id/item_image"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:background="?attr/selectableItemBackground"
-                android:scaleType="centerCrop"
                 android:transitionName="item_image"
                 app:itemImage="@{item}"
                 app:layout_constraintBottom_toBottomOf="parent"

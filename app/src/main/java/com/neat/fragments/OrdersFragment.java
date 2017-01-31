@@ -136,18 +136,13 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
     public void onAttach(Context context) {
         super.onAttach(context);
         NeatApplication.getComponent(context).inject(this);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         sessionManager.addOnOrdersPlacedListener(this);
         sessionManager.addOnNewPendingOrderAddedListener(this);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         sessionManager.removeOnOrdersPlacedListener(this);
         sessionManager.removeOnNewPendingOrderAddedListener(this);
     }
@@ -155,7 +150,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
     @Override
     public void onResume() {
         super.onResume();
-        setBottomSheetCollapsedIfHasOrders();
+//        setStateCollapsedIfHasOrders();
     }
 
     @Override
@@ -371,74 +366,84 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
      * @param order
      */
     @Override
-    public void onNewPendingOrderAdded(Order order, boolean isOrderNew) {
+    public void onNewPendingOrderAdded(final Order order, final boolean isOrderNew) {
+
 
         if (clearJustOrderedStateTimer != null)
             clearJustOrderedStateTimer.cancel();
 
-        setStateCollapsed();
-
-        collapsedViewRef = collapsedOrdersLayout;
-
-        pendingOrdersWrapper.removeAllViews();
-        pendingOrdersWrapper.addView(collapsedOrdersLayout);
-        bottomLayout.findViewById(R.id.caret).setRotation(180);
-
-        pendingExpandedViewRef = pendingExpandedWithItemsView;
-
-        final LayoutInflater inflater = LayoutInflater.from(getActivity());
-
-        pendingItemsLayoutCollapsed.setVisibility(View.VISIBLE);
-        pendingOrdersCollapsedTitle.setText(R.string.pending_products_title);
-        pendingImageCollapsed.setVisibility(View.INVISIBLE);
-        orderButton.setVisibility(View.VISIBLE);
-
-        final ItemListPendingOrderCollapsedBinding collapsedBinding;
-
-        // pending order didn't exist for this item
-        if (isOrderNew) {
-
-            /* Create new collapsed view */
-            collapsedBinding = ItemListPendingOrderCollapsedBinding.inflate(inflater);
-            collapsedBinding.setOrder(order);
-            pendingOrderCollapsedBindingMap.put(order.item, collapsedBinding);
-            pendingItemsLayoutCollapsed.addView(collapsedBinding.getRoot());
-
-            /* Add extended view */
-            final ItemListPendingOrderBinding expandedBinding = ItemListPendingOrderBinding.inflate(inflater);
-            expandedBinding.setOrder(order);
-            expandedBinding.setHandlers(new PendingOrderItemClickHandler() {
-                @Override
-                public void onOrderClick(View view, Order order) {
-                }
-
-                @Override
-                public void onOrderRemovedClick(View view, Order order) {
-                    decreaseOrderCount(order, expandedBinding.getRoot(), collapsedBinding.getRoot());
-                }
-            });
-            pendingItemsLayoutExpanded.addView(expandedBinding.getRoot());
-
-        } else {
-            collapsedBinding = pendingOrderCollapsedBindingMap.get(order.item);
-        }
-
-        /*
-         * Take the item icon and set the ripple effect pressed, then disable with a handler
-         */
-        final RippleDrawable background = (RippleDrawable) collapsedBinding.getRoot().getBackground();
-        background.setState(new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled});
+        final boolean bottomStatusChanged = setStateCollapsed();
 
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                background.setState(new int[]{});
-            }
-        }, 2000);
 
-        String ordersButtonString = getString(R.string.order_num_items, sessionManager.getPendingItemsCount());
-        orderButton.setText(ordersButtonString);
-        orderButtonExpanded.setText(ordersButtonString);
+                collapsedViewRef = collapsedOrdersLayout;
+
+                pendingOrdersWrapper.removeAllViews();
+                pendingOrdersWrapper.addView(collapsedOrdersLayout);
+                bottomLayout.findViewById(R.id.caret).setRotation(180);
+
+                pendingExpandedViewRef = pendingExpandedWithItemsView;
+
+                final LayoutInflater inflater = LayoutInflater.from(getActivity());
+
+                pendingItemsLayoutCollapsed.setVisibility(View.VISIBLE);
+                pendingOrdersCollapsedTitle.setText(R.string.pending_products_title);
+                pendingImageCollapsed.setVisibility(View.INVISIBLE);
+                orderButton.setVisibility(View.VISIBLE);
+
+                final ItemListPendingOrderCollapsedBinding collapsedBinding;
+
+                // pending order didn't exist for this item
+                if (isOrderNew) {
+
+                    /* Create new collapsed view */
+                    collapsedBinding = ItemListPendingOrderCollapsedBinding.inflate(inflater);
+                    collapsedBinding.setOrder(order);
+                    pendingOrderCollapsedBindingMap.put(order.item, collapsedBinding);
+                    pendingItemsLayoutCollapsed.addView(collapsedBinding.getRoot());
+
+                    /* Add extended view */
+                    final ItemListPendingOrderBinding expandedBinding = ItemListPendingOrderBinding.inflate(inflater);
+                    expandedBinding.setOrder(order);
+                    expandedBinding.setHandlers(new PendingOrderItemClickHandler() {
+                        @Override
+                        public void onOrderClick(View view, Order order) {
+                        }
+
+                        @Override
+                        public void onOrderRemovedClick(View view, Order order) {
+                            decreaseOrderCount(order, expandedBinding.getRoot(), collapsedBinding.getRoot());
+                        }
+                    });
+                    pendingItemsLayoutExpanded.addView(expandedBinding.getRoot());
+
+                } else {
+                    collapsedBinding = pendingOrderCollapsedBindingMap.get(order.item);
+                }
+
+                /*
+                 * Take the item icon and set the ripple effect pressed, then disable with a handler
+                 */
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        final RippleDrawable background = (RippleDrawable) collapsedBinding.getRoot().getBackground();
+                        background.setState(new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled});
+
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                background.setState(new int[]{});
+                            }
+                        }, 2000);
+
+                        String ordersButtonString = getString(R.string.order_num_items, sessionManager.getPendingItemsCount());
+                        orderButton.setText(ordersButtonString);
+                        orderButtonExpanded.setText(ordersButtonString);
+                    }
+                }, 16);
 
 
         /* Animate collapsed icon */
@@ -470,37 +475,41 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
 //            anim.start();
 
 
-        /* Make bottom layout bounce */
-        Animator bounce = AnimatorInflater.loadAnimator(getActivity(), R.animator.orders_bounce_animator);
-        bounce.setTarget(bottomLayout);
-        bounce.start();
+                if (!bottomStatusChanged) {
+                    /* Make bottom layout bounce */
+                    Animator bounce = AnimatorInflater.loadAnimator(getActivity(), R.animator.orders_bounce_animator);
+                    bounce.setStartDelay(32);
+                    bounce.setTarget(bottomLayout);
+                    bounce.start();
+                }
 
-        displayOrdersButtonTooltip();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayOrdersButtonTooltip();
+                    }
+                }, 48);
+            }
+        }, 128);
+
 
     }
 
     public void displayOrdersButtonTooltip() {
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Tooltip.make(getActivity(),
-                        new Tooltip.Builder(ORDERS_BUTTON_TOOLTIP_ID)
-                                .withStyleId(R.style.Tooltip)
-                                .maxWidth(getResources().getDimensionPixelSize(R.dimen.tooltip_width))
-                                .anchor(orderButton, Tooltip.Gravity.LEFT)
-                                .closePolicy(new Tooltip.ClosePolicy()
-                                        .insidePolicy(true, false)
-                                        .outsidePolicy(false, false), 5000)
-                                .text(getString(R.string.orders_button_tooltip))
-                                .withArrow(true)
-                                .withOverlay(false)
-                                .floatingAnimation(Tooltip.AnimationBuilder.DEFAULT)
-                                .build()
-                ).show();
-            }
-        }, 100);
-
+        Tooltip.make(getActivity(),
+                new Tooltip.Builder(ORDERS_BUTTON_TOOLTIP_ID)
+                        .withStyleId(R.style.Tooltip)
+                        .maxWidth(getResources().getDimensionPixelSize(R.dimen.tooltip_width))
+                        .anchor(orderButton, Tooltip.Gravity.LEFT)
+                        .closePolicy(new Tooltip.ClosePolicy()
+                                .insidePolicy(true, false)
+                                .outsidePolicy(false, false), 5000)
+                        .text(getString(R.string.orders_button_tooltip))
+                        .withArrow(true)
+                        .withOverlay(false)
+                        .floatingAnimation(Tooltip.AnimationBuilder.DEFAULT)
+                        .build()
+        ).show();
     }
 
     public void discardOrdersButtonTooltip() {
@@ -692,7 +701,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
         return expanded;
     }
 
-    public void setBottomSheetCollapsedIfHasOrders() {
+    public void setStateCollapsedIfHasOrders() {
 
         if (!sessionManager.hasSessionStarted() || !sessionManager.hasAnyOrder()) {
             setStateHidden();
@@ -702,36 +711,26 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
 
     }
 
-    public void setStateCollapsed() {
-        if (bottomSheetBehavior.getState() == STATE_COLLAPSED) return;
+    /**
+     * @return true if state changed
+     */
+    public boolean setStateCollapsed() {
+        if (bottomSheetBehavior.getState() == STATE_COLLAPSED) return false;
         bottomSheetBehavior.setHideable(false);
         bottomSheetBehavior.setState(STATE_COLLAPSED);
         doCollapseTransition();
+        return true;
     }
 
-    public void setStateHidden() {
-        if (bottomSheetBehavior.getState() == STATE_HIDDEN) return;
+    /**
+     * @return true if state changed
+     */
+    public boolean setStateHidden() {
+        if (bottomSheetBehavior.getState() == STATE_HIDDEN) return false;
         bottomSheetBehavior.setHideable(true);
         bottomSheetBehavior.setState(STATE_HIDDEN);
         doCollapseTransition();
+        return true;
     }
 
-
-    public void hideOrdersButton() {
-        orderButton.getBackground().setAlpha(0);
-        setStateHidden();
-    }
-
-    public void displayOrdersButton() {
-        ValueAnimator alphaAnimation = ValueAnimator.ofInt(0, 255);
-        alphaAnimation.setDuration(400);
-        alphaAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                orderButton.getBackground().setAlpha((Integer) animation.getAnimatedValue());
-            }
-        });
-        alphaAnimation.start();
-        setBottomSheetCollapsedIfHasOrders();
-    }
 }

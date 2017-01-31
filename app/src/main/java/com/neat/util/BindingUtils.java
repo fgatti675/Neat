@@ -142,8 +142,21 @@ public class BindingUtils {
     @BindingAdapter({"itemImage"})
     public static void bindImage(ImageView view, Item item) {
         if (item.imageUrl != null) {
-            Glide.with(view.getContext()).load(item.imageUrl)
-                    .centerCrop()
+            Glide.with(view.getContext())
+                    .load(item.imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .dontTransform()
+                    .into(view);
+        } else {
+            //TODO
+        }
+    }
+
+    @BindingAdapter({"itemImageDontTransform"})
+    public static void bindImageDontTransform(ImageView view, Item item) {
+        if (item.imageUrl != null) {
+            Glide.with(view.getContext())
+                    .load(item.imageUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(view);
         } else {

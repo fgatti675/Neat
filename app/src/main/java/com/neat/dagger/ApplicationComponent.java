@@ -1,7 +1,6 @@
 package com.neat.dagger;
 
 
-import com.neat.ItemDetailsFragment;
 import com.neat.NeatApplication;
 import com.neat.RestaurantActivity;
 import com.neat.fragments.ItemFeaturedFragment;
@@ -26,8 +25,6 @@ public interface ApplicationComponent {
     void inject(ItemFeaturedFragment fragment);
 
     void inject(ItemListSmallFragment fragment);
-
-    void inject(ItemDetailsFragment fragment);
 
     NeatApplication application();
 }

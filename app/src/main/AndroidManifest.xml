@@ -21,14 +21,21 @@
             android:name=".RestaurantActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Neat.NoActionBar"
-            android:windowSoftInputMode="adjustResize">
+            android:theme="@style/Neat.NoActionBar">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN" />-->
 
             <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
+
+        <activity
+            android:name=".ItemDetailsActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/Neat"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"

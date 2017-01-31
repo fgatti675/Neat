@@ -7,14 +7,15 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Slide;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,10 +41,11 @@ import butterknife.ButterKnife;
 
 public class RestaurantActivity extends AppCompatActivity
         implements RestaurantProvider.Callback,
-        ItemDetailsFragment.OnItemDetailsClosedListener,
         SessionManager.OnOrdersPlacedListener {
 
     private static final String TAG = RestaurantActivity.class.getSimpleName();
+
+    private static final int REQUEST_ITEM_DETAILS = 15;
 
     @Inject
     RestaurantProvider restaurantProvider;
@@ -90,7 +92,6 @@ public class RestaurantActivity extends AppCompatActivity
 
     private Restaurant restaurant;
 
-    private ItemDetailsFragment itemDetailsFragment;
     private View payAction;
     private View menuAction;
 
@@ -161,7 +162,7 @@ public class RestaurantActivity extends AppCompatActivity
 
                 // display orders layout based on scroll
                 if (scrollPercentage < .5)
-                    ordersFragment.setBottomSheetCollapsedIfHasOrders();
+                    ordersFragment.setStateCollapsedIfHasOrders();
                 else
                     ordersFragment.setStateHidden();
 
@@ -253,9 +254,7 @@ public class RestaurantActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (itemDetailsFragment != null && itemDetailsFragment.isAdded())
-            onItemDetailsClosedRequested();
-        else if (ordersFragment.isExpanded())
+        if (ordersFragment.isExpanded())
             ordersFragment.setStateCollapsed();
         else
             super.onBackPressed();
@@ -275,29 +274,50 @@ public class RestaurantActivity extends AppCompatActivity
 
     public void displayItemDetailsView(View view, Item item) {
 
-        mainSectionsContainer.setFitsSystemWindows(true);
-
-        ordersFragment.hideOrdersButton();
+        ordersFragment.setStateHidden();
         ordersFragment.discardOrdersButtonTooltip();
 
-        final FragmentManager fragmentManager = getFragmentManager();
+        Intent intent = new Intent(this, ItemDetailsActivity.class);
+        intent.putExtra(ItemDetailsActivity.EXTRA_ITEM, item);
 
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        itemDetailsFragment = ItemDetailsFragment.newInstance(item);
-        itemDetailsFragment.setOnItemDetailsClosedListener(this);
-//        fragment.setSharedElementEnterTransition(new AutoTransition());
-        itemDetailsFragment.setEnterTransition(new Slide(Gravity.END));
-        transaction.addSharedElement(view.findViewById(R.id.item_title), "item_title");
-        transaction.addSharedElement(view.findViewById(R.id.item_image), "item_image");
-        transaction.replace(R.id.main_layout, itemDetailsFragment, null);
-        transaction.addToBackStack("item_details");
-        transaction.commitAllowingStateLoss();
+        View statusBar = findViewById(android.R.id.statusBarBackground);
+        View navigationBar = findViewById(android.R.id.navigationBarBackground);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this,
+//                        Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME),
+                        Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME),
+//                        Pair.create(view.findViewById(R.id.item_title), "item_title"),
+                        Pair.create(view.findViewById(R.id.item_image), "item_image"));
+
+        startActivityForResult(intent, REQUEST_ITEM_DETAILS, options.toBundle());
+
+//        final FragmentManager fragmentManager = getFragmentManager();
+//
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        itemDetailsFragment = ItemDetailsFragment.newInstance(item);
+//        itemDetailsFragment.setOnItemDetailsClosedListener(this);
+////        fragment.setSharedElementEnterTransition(new AutoTransition());
+//        itemDetailsFragment.setEnterTransition(new Slide(Gravity.END));
+//        transaction.addSharedElement(view.findViewById(R.id.item_title), "item_title");
+//        transaction.addSharedElement(view.findViewById(R.id.item_image), "item_image");
+//        transaction.replace(R.id.main_layout, itemDetailsFragment, null);
+//        transaction.addToBackStack("item_details");
+//        transaction.commitAllowingStateLoss();
     }
 
-    public void onItemDetailsClosedRequested() {
-        mainSectionsContainer.setFitsSystemWindows(true);
-        getFragmentManager().popBackStack();
-        ordersFragment.displayOrdersButton();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ITEM_DETAILS) {
+            if (resultCode == ItemDetailsActivity.RESULT_ITEM_ADDED) {
+                sessionManager.addPendingItem(
+                        (Item) data.getSerializableExtra(ItemDetailsActivity.EXTRA_ITEM),
+                        data.getIntExtra(ItemDetailsActivity.EXTRA_ITEM_COUNT, -1)) ;
+            }
+        }
+
+        ordersFragment.setStateCollapsedIfHasOrders();
     }
 
     @Override
