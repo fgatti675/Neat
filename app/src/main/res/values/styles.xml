@@ -12,8 +12,6 @@
         <item name="android:textColorPrimary">@color/text_primary_dark</item>
         <item name="android:textColorSecondary">@color/text_secondary_dark</item>
 
-        <item name="android:windowContentTransitions">true</item>
-
     </style>
 
     <style name="Neat.NoActionBar">
@@ -140,6 +138,14 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="Text.Monospace" >
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="Text.Monospace.White" >
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="Text.Display" parent="TextAppearance.AppCompat.Display2">
     </style>
 
@@ -159,7 +165,7 @@
     <style name="Tooltip">
         <item name="ttlm_backgroundColor">@color/colorAccentAlt</item>
         <item name="ttlm_padding">@dimen/larger_padding</item>
-        <item name="android:textAppearance">@style/Text.White</item>
+        <item name="android:textAppearance">@style/Text.Monospace.White</item>
     </style>
 
 </resources>

@@ -12,32 +12,31 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Neat">
-
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name=".RestaurantActivity"
+            android:name=".view.MenuActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Neat.NoActionBar">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
-
         <activity
-            android:name=".ItemDetailsActivity"
+            android:name=".view.ItemDetailsActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Neat"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
+            android:theme="@style/Neat.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".view.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Neat.NoActionBar">
@@ -47,14 +46,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:replace="android:theme" />
-
+        <activity android:name=".view.RestaurantSelectionActivity"></activity>
     </application>
 
 </manifest>

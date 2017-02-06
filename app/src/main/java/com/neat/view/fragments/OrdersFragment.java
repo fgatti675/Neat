@@ -1,14 +1,12 @@
-package com.neat.fragments;
+package com.neat.view.fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
@@ -28,18 +26,18 @@ import android.widget.TextView;
 
 import com.neat.NeatApplication;
 import com.neat.R;
-import com.neat.SessionManager;
+import com.neat.dagger.SessionScope;
 import com.neat.databinding.ItemListPendingOrderBinding;
 import com.neat.databinding.ItemListPendingOrderCollapsedBinding;
 import com.neat.databinding.ItemListRequestedOrderBinding;
-import com.neat.model.Item;
-import com.neat.model.Order;
-import com.neat.util.PendingOrderItemClickHandler;
+import com.neat.model.classes.Order;
+import com.neat.viewmodel.OrderViewModel;
+import com.neat.viewmodel.PendingOrderItemClickHandler;
+import com.neat.viewmodel.SessionViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -53,13 +51,14 @@ import static android.support.design.widget.BottomSheetBehavior.STATE_EXPANDED;
 import static android.support.design.widget.BottomSheetBehavior.STATE_HIDDEN;
 import static com.neat.R.id.caret;
 
-public class OrdersFragment extends Fragment implements SessionManager.OnOrdersPlacedListener, SessionManager.OnNewPendingOrderAddedListener {
+@SessionScope
+public class OrdersFragment extends Fragment implements SessionViewModel.OnOrdersPlacedListener, SessionViewModel.OnPendingOrdersChangedListener {
 
     private static final String TAG = OrdersFragment.class.getSimpleName();
     public static final int ORDERS_BUTTON_TOOLTIP_ID = 101;
 
     @Inject
-    SessionManager sessionManager;
+    SessionViewModel sessionViewModel;
 
     @Bind(R.id.pending_orders_wrapper)
     ViewGroup pendingOrdersWrapper;
@@ -125,32 +124,28 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
     private BottomSheetBehavior bottomSheetBehavior;
 
     private float bottomSheetHeight;
-    private CountDownTimer clearJustOrderedStateTimer;
     private Handler handler = new Handler();
+
+    private Map<OrderViewModel, ItemListPendingOrderCollapsedBinding> pendingOrderCollapsedBindingMap = new HashMap<>();
+    private Map<OrderViewModel, ItemListPendingOrderBinding> pendingOrderExpandedBindingMap = new HashMap<>();
 
     public OrdersFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        NeatApplication.getComponent(context).inject(this);
-        sessionManager.addOnOrdersPlacedListener(this);
-        sessionManager.addOnNewPendingOrderAddedListener(this);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        NeatApplication.getComponent(getActivity()).application().getSessionComponent().inject(this);
+        sessionViewModel.addOnOrdersPlacedListener(this);
+        sessionViewModel.addOnNewPendingOrderAddedListener(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        sessionManager.removeOnOrdersPlacedListener(this);
-        sessionManager.removeOnNewPendingOrderAddedListener(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-//        setStateCollapsedIfHasOrders();
+        sessionViewModel.removeOnOrdersPlacedListener(this);
+        sessionViewModel.removeOnNewPendingOrderAddedListener(this);
     }
 
     @Override
@@ -217,7 +212,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
 
                     prevState = STATE_EXPANDED;
 
-                    if (sessionManager.existingRequestedOrders()) {
+                    if (sessionViewModel.existingRequestedOrders()) {
                         if (payButton.getVisibility() == View.GONE) {
                             revealPayFAB();
                         }
@@ -268,7 +263,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
             @Override
             public void onClick(View v) {
                 discardOrdersButtonTooltip();
-                sessionManager.placePendingOrders();
+                sessionViewModel.placePendingOrders();
             }
         };
         orderButton.setOnClickListener(orderButtonClickedListener);
@@ -358,19 +353,14 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
         requestedOrdersWrapper.setAlpha(0);
     }
 
-    Map<Item, ItemListPendingOrderCollapsedBinding> pendingOrderCollapsedBindingMap = new HashMap<>();
 
     /**
      * Update view based on new pending orders, ready to be ordered
      *
-     * @param order
+     * @param orderViewModel
      */
     @Override
-    public void onNewPendingOrderAdded(final Order order, final boolean isOrderNew) {
-
-
-        if (clearJustOrderedStateTimer != null)
-            clearJustOrderedStateTimer.cancel();
+    public void onPendingOrderCreated(final OrderViewModel orderViewModel) {
 
         final boolean bottomStatusChanged = setStateCollapsed();
 
@@ -378,109 +368,25 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
             @Override
             public void run() {
 
-                collapsedViewRef = collapsedOrdersLayout;
-
-                pendingOrdersWrapper.removeAllViews();
-                pendingOrdersWrapper.addView(collapsedOrdersLayout);
-                bottomLayout.findViewById(R.id.caret).setRotation(180);
-
-                pendingExpandedViewRef = pendingExpandedWithItemsView;
+                setStateWithPendingOrders();
 
                 final LayoutInflater inflater = LayoutInflater.from(getActivity());
 
-                pendingItemsLayoutCollapsed.setVisibility(View.VISIBLE);
-                pendingOrdersCollapsedTitle.setText(R.string.pending_products_title);
-                pendingImageCollapsed.setVisibility(View.INVISIBLE);
-                orderButton.setVisibility(View.VISIBLE);
+                /* Create new collapsed view */
+                ItemListPendingOrderCollapsedBinding collapsedBinding = ItemListPendingOrderCollapsedBinding.inflate(inflater);
+                collapsedBinding.setOrderviewmodel(orderViewModel);
+                pendingOrderCollapsedBindingMap.put(orderViewModel, collapsedBinding);
+                pendingItemsLayoutCollapsed.addView(collapsedBinding.getRoot());
+                setIconRippleActivated(collapsedBinding.getRoot());
 
-                final ItemListPendingOrderCollapsedBinding collapsedBinding;
-
-                // pending order didn't exist for this item
-                if (isOrderNew) {
-
-                    /* Create new collapsed view */
-                    collapsedBinding = ItemListPendingOrderCollapsedBinding.inflate(inflater);
-                    collapsedBinding.setOrder(order);
-                    pendingOrderCollapsedBindingMap.put(order.item, collapsedBinding);
-                    pendingItemsLayoutCollapsed.addView(collapsedBinding.getRoot());
-
-                    /* Add extended view */
-                    final ItemListPendingOrderBinding expandedBinding = ItemListPendingOrderBinding.inflate(inflater);
-                    expandedBinding.setOrder(order);
-                    expandedBinding.setHandlers(new PendingOrderItemClickHandler() {
-                        @Override
-                        public void onOrderClick(View view, Order order) {
-                        }
-
-                        @Override
-                        public void onOrderRemovedClick(View view, Order order) {
-                            decreaseOrderCount(order, expandedBinding.getRoot(), collapsedBinding.getRoot());
-                        }
-                    });
-                    pendingItemsLayoutExpanded.addView(expandedBinding.getRoot());
-
-                } else {
-                    collapsedBinding = pendingOrderCollapsedBindingMap.get(order.item);
-                }
-
-                /*
-                 * Take the item icon and set the ripple effect pressed, then disable with a handler
-                 */
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        final RippleDrawable background = (RippleDrawable) collapsedBinding.getRoot().getBackground();
-                        background.setState(new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled});
-
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                background.setState(new int[]{});
-                            }
-                        }, 2000);
-
-                        String ordersButtonString = getString(R.string.order_num_items, sessionManager.getPendingItemsCount());
-                        orderButton.setText(ordersButtonString);
-                        orderButtonExpanded.setText(ordersButtonString);
-                    }
-                }, 16);
-
-
-        /* Animate collapsed icon */
-//        final ViewGroup iconView = (ViewGroup) collapsedBinding.getRoot();
-//        ValueAnimator alphaAnimation = ValueAnimator.ofInt(255, 0);
-//        alphaAnimation.setStartDelay(200);
-//        alphaAnimation.setDuration(400);
-//        alphaAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                iconView.getBackground().setAlpha((Integer) animation.getAnimatedValue());
-//            }
-//        });
-//        alphaAnimation.start();
-
-            /* Animate new icon */
-//            ValueAnimator bgAnimator = ValueAnimator.ofArgb(getResources().getColor(R.color.colorAccentAlt), Color.TRANSPARENT);
-//            bgAnimator.setDuration(800);
-//            bgAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//                public void onAnimationUpdate(ValueAnimator animation) {
-//                    iconView.setBackgroundColor((Integer) animation.getAnimatedValue());
-//                }
-//            });
-//            bgAnimator.start();
-//
-//            int iconSide = (int) getResources().getDimension(R.dimen.small_icon);
-//            int finalRadius = (int) (iconSide / 2 * 1.44);
-//            Animator anim = ViewAnimationUtils.createCircularReveal(collapsedBinding.getRoot(), iconSide / 2, iconSide / 2, 0, finalRadius);
-//            anim.start();
-
+                /* Add extended view */
+                ItemListPendingOrderBinding expandedBinding = ItemListPendingOrderBinding.inflate(inflater);
+                expandedBinding.setOrderviewmodel(orderViewModel);
+                pendingOrderExpandedBindingMap.put(orderViewModel, expandedBinding);
+                pendingItemsLayoutExpanded.addView(expandedBinding.getRoot());
 
                 if (!bottomStatusChanged) {
-                    /* Make bottom layout bounce */
-                    Animator bounce = AnimatorInflater.loadAnimator(getActivity(), R.animator.orders_bounce_animator);
-                    bounce.setStartDelay(32);
-                    bounce.setTarget(bottomLayout);
-                    bounce.start();
+                    animateBottomBounce();
                 }
 
                 handler.postDelayed(new Runnable() {
@@ -490,17 +396,106 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
                     }
                 }, 48);
             }
+
         }, 128);
 
+    }
 
+
+    @Override
+    public void onPendingOrderUpdated(final OrderViewModel orderViewModel) {
+
+        final boolean bottomStatusChanged = setStateCollapsed();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                setStateWithPendingOrders();
+
+                final ItemListPendingOrderCollapsedBinding collapsedBinding;
+
+                collapsedBinding = pendingOrderCollapsedBindingMap.get(orderViewModel);
+
+                setIconRippleActivated(collapsedBinding.getRoot());
+
+                if (!bottomStatusChanged) {
+                    /* Make bottom layout bounce */
+                    animateBottomBounce();
+                }
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayOrdersButtonTooltip();
+                    }
+                }, 48);
+            }
+
+
+        }, 128);
+    }
+
+    @Override
+    public void onPendingOrderRemoved(OrderViewModel orderViewModel) {
+        TransitionManager.beginDelayedTransition(bottomLayout);
+        pendingItemsLayoutExpanded.removeView(expandedBindingRoot);
+        pendingItemsLayoutCollapsed.removeView(collapsedBindingRoot);
+
+        if (!sessionViewModel.hasPendingOrders()) {
+            setEmptyPendingOrdersState();
+        }
+    }
+
+
+    private void setStateWithPendingOrders() {
+        collapsedViewRef = collapsedOrdersLayout;
+
+        pendingOrdersWrapper.removeAllViews();
+        pendingOrdersWrapper.addView(collapsedOrdersLayout);
+        bottomLayout.findViewById(R.id.caret).setRotation(180);
+
+        pendingExpandedViewRef = pendingExpandedWithItemsView;
+
+        pendingItemsLayoutCollapsed.setVisibility(View.VISIBLE);
+        pendingOrdersCollapsedTitle.setText(R.string.pending_products_title);
+        pendingImageCollapsed.setVisibility(View.INVISIBLE);
+        orderButton.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Take the item icon and set the ripple effect pressed, then disable with a handler
+     *
+     * @param view must have a RippleDrawable as background
+     */
+    private void setIconRippleActivated(final View view) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final RippleDrawable background = (RippleDrawable) view.getBackground();
+                background.setState(new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled});
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        background.setState(new int[]{});
+                    }
+                }, 2000);
+
+                String ordersButtonString = getString(R.string.order_num_items, sessionViewModel.getPendingItemsCount());
+                orderButton.setText(ordersButtonString);
+                orderButtonExpanded.setText(ordersButtonString);
+            }
+        }, 16);
     }
 
     public void displayOrdersButtonTooltip() {
         Tooltip.make(getActivity(),
                 new Tooltip.Builder(ORDERS_BUTTON_TOOLTIP_ID)
+                        .fadeDuration(200)
                         .withStyleId(R.style.Tooltip)
                         .maxWidth(getResources().getDimensionPixelSize(R.dimen.tooltip_width))
-                        .anchor(orderButton, Tooltip.Gravity.LEFT)
+                        .anchor(orderButton, Tooltip.Gravity.TOP)
                         .closePolicy(new Tooltip.ClosePolicy()
                                 .insidePolicy(true, false)
                                 .outsidePolicy(false, false), 5000)
@@ -523,21 +518,25 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
      * @param expandedBindingRoot
      * @param collapsedBindingRoot
      */
-    private void decreaseOrderCount(Order order, View expandedBindingRoot, View collapsedBindingRoot) {
+    private void decreaseOrderCount(OrderViewModel order, View expandedBindingRoot, View collapsedBindingRoot) {
 
-        boolean orderedRemoved = sessionManager.removeItemInPendingOrder(order);
+        boolean orderedRemoved = sessionViewModel.removeItemInPendingOrder(order);
 
         if (orderedRemoved) {
 
-            TransitionManager.beginDelayedTransition(bottomLayout);
-            pendingItemsLayoutExpanded.removeView(expandedBindingRoot);
-            pendingItemsLayoutCollapsed.removeView(collapsedBindingRoot);
 
-            if (!sessionManager.hasPendingOrders()) {
-                setEmptyPendingOrdersState();
-            }
 
         }
+    }
+
+    /**
+     * Make bottom layout bounce
+     */
+    private void animateBottomBounce() {
+        Animator bounce = AnimatorInflater.loadAnimator(getActivity(), R.animator.orders_bounce_animator);
+        bounce.setStartDelay(32);
+        bounce.setTarget(bottomLayout);
+        bounce.start();
     }
 
 
@@ -545,7 +544,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
      * Update the view based on the newly ordered items
      */
     @Override
-    public void onOrdersPlaced(List<Order> newlyPlacedOrders) {
+    public void onOrdersPlaced(List<OrderViewModel> newlyPlacedOrders) {
 
         pendingOrderCollapsedBindingMap.clear();
 
@@ -612,7 +611,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
 
         TransitionManager.beginDelayedTransition(isExpanded() ? bottomLayout : pendingOrdersWrapper, transition);
 
-        for (Order order : newlyPlacedOrders) {
+        for (OrderViewModel order : newlyPlacedOrders) {
             ItemListRequestedOrderBinding itemListRequestedOrderBinding = ItemListRequestedOrderBinding.inflate(inflater);
             itemListRequestedOrderBinding.setOrder(order);
             View view = itemListRequestedOrderBinding.getRoot();
@@ -623,8 +622,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
         requestedOrdersWrapper.removeAllViews();
         requestedOrdersWrapper.addView(requestedOrdersView);
 
-        float sum = sessionManager.getRequestedItemsPrice();
-        totalPriceTextView.setText(String.format(Locale.getDefault(), "%.2f %s", sum, sessionManager.getCurrency()));
+        totalPriceTextView.setText(sessionViewModel.getTotalPriceString());
 
         setJustOrderedState();
 
@@ -703,7 +701,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnOrdersP
 
     public void setStateCollapsedIfHasOrders() {
 
-        if (!sessionManager.hasSessionStarted() || !sessionManager.hasAnyOrder()) {
+        if (!sessionViewModel.hasSessionStarted() || !sessionViewModel.hasAnyOrder()) {
             setStateHidden();
             return;
         }

@@ -3,20 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/larger_padding"
-    android:focusable="true"
     android:orientation="vertical"
-    tools:context=".fragments.ItemListSmallFragment">
+    tools:context=".view.fragments.ItemListSmallFragment">
 
     <include layout="@layout/layout_section_header" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/food_item_side"
         android:background="@color/white"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:orientation="vertical"
+        tools:orientation="horizontal"
         tools:listitem="@layout/item_menu_square" />
 
 </LinearLayout>

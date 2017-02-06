@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/larger_padding"
     android:orientation="vertical"
-    tools:context=".fragments.ItemListSmallFragment">
+    tools:context=".view.fragments.ItemListSmallFragment">
 
     <include layout="@layout/layout_section_header" />
 

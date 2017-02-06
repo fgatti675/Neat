@@ -1,4 +1,4 @@
-package com.neat.model;
+package com.neat.model.classes;
 
 import java.io.Serializable;
 import java.util.ArrayList;

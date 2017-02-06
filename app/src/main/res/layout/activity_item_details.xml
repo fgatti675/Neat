@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.neat.model.Item" />
+            type="com.neat.viewmodel.ItemViewModel" />
     </data>
 
     <FrameLayout
@@ -16,49 +16,49 @@
         android:descendantFocusability="beforeDescendants"
         android:focusableInTouchMode="true">
 
+        <FrameLayout
+            android:id="@+id/bottom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/orders_layout_sneak_peak"
+            android:layout_gravity="bottom"
+            android:background="@color/light_grey">
+
+            <Button
+                android:id="@+id/add_button"
+                style="@style/Button.Accent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center"
+                android:layout_marginEnd="16dp"
+                android:padding="20dp"
+                android:text="@string/add_to_pending_orders"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </FrameLayout>
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/orders_layout_sneak_peak"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:transitionName="item_layout"
+            android:layout_marginBottom="@dimen/orders_layout_sneak_peak">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:descendantFocusability="beforeDescendants"
-                android:focusableInTouchMode="true"
-                tools:context="com.neat.ItemDetailsActivity">
+                tools:context="com.neat.view.ItemDetailsActivity">
 
                 <ImageView
                     android:id="@+id/item_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="300dp"
-                    android:transitionName="item_image"
-                    android:scaleType="centerCrop"
-                    app:itemImageDontTransform="@{item}"
-                    app:layout_constraintLeft_toLeftOf="@+id/toolbar"
-                    app:layout_constraintRight_toRightOf="@+id/toolbar"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:background="@color/colorAccentAlt" />
-
-                <Toolbar
-                    android:id="@+id/toolbar"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_toolbar_shadow"
+                    android:layout_height="300dp"
+                    android:scaleType="centerCrop"
+                    android:transitionName="item_image"
+                    app:itemImage="@{item}"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/item_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginStart="16dp"
-                    app:itemIcon="@{item}"
-                    app:layout_constraintBottom_toBottomOf="@+id/item_image"
-                    app:layout_constraintLeft_toLeftOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/ic_bill_color" />
 
                 <TextView
                     android:id="@+id/item_title"
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="@dimen/larger_padding"
+                    android:layout_marginTop="@dimen/large_padding"
                     android:text="@{item.name}"
                     android:textAppearance="@style/Text.Title"
                     android:transitionName="item_title"
@@ -75,16 +75,27 @@
                     app:layout_constraintTop_toBottomOf="@+id/item_image"
                     tools:text="Ensalada de guacamole, mozarella, tomate y pesto" />
 
+                <ImageView
+                    android:id="@+id/item_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="@dimen/large_padding"
+                    app:itemIcon="@{item}"
+                    android:tint="@color/text_secondary_dark"
+                    app:layout_constraintTop_toBottomOf="@+id/item_title"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
                 <TextView
                     android:id="@+id/item_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="@dimen/default_padding"
-                    android:textAppearance="@style/Text"
+                    android:layout_marginStart="@dimen/large_padding"
+                    android:textAppearance="@style/Text.Secondary"
                     app:itemPrice="@{item}"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/item_title"
+                    app:layout_constraintLeft_toRightOf="@+id/item_icon"
+                    app:layout_constraintTop_toTopOf="@id/item_icon"
+                    app:layout_constraintBottom_toBottomOf="@id/item_icon"
                     tools:text="2,40€" />
 
                 <android.support.design.widget.TextInputLayout
@@ -124,7 +135,7 @@
                     android:layout_marginTop="@dimen/large_padding"
                     android:ems="1"
                     android:gravity="center"
-                    android:text="1"
+                    tools:text="1"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/note_edit_wrap" />
@@ -144,24 +155,15 @@
         </ScrollView>
 
 
-        <android.support.constraint.ConstraintLayout
+        <Toolbar
+            android:elevation="2dp"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/orders_layout_sneak_peak"
-            android:layout_gravity="bottom">
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_toolbar_shadow"
+            android:fitsSystemWindows="true"
+            android:layout_gravity="top"/>
 
-            <Button
-                android:id="@+id/add_button"
-                style="@style/Button.Accent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                android:padding="20dp"
-                android:text="@string/add_to_pending_orders"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
 
     </FrameLayout>
 </layout>

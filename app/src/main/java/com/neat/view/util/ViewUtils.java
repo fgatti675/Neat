@@ -1,4 +1,4 @@
-package com.neat.util;
+package com.neat.view.util;
 
 import android.content.Context;
 

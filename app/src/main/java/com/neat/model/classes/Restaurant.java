@@ -1,4 +1,4 @@
-package com.neat.model;
+package com.neat.model.classes;
 
 /**
  * Created by f.gatti.gomez on 08/11/2016.

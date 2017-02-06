@@ -1,8 +1,8 @@
-package com.neat.util;
+package com.neat.viewmodel;
 
 import android.view.View;
 
-import com.neat.model.Order;
+import com.neat.model.classes.Order;
 
 /**
  * Created by f.gatti.gomez on 10/11/2016.

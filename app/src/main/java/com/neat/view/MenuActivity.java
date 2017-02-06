@@ -1,4 +1,4 @@
-package com.neat;
+package com.neat.view;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -23,14 +23,18 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.neat.fragments.ItemFeaturedFragment;
-import com.neat.fragments.ItemListFragment;
-import com.neat.fragments.ItemListSmallFragment;
-import com.neat.fragments.OrdersFragment;
-import com.neat.model.Item;
-import com.neat.model.MenuSection;
-import com.neat.model.Order;
-import com.neat.model.Restaurant;
+import com.neat.NeatApplication;
+import com.neat.R;
+import com.neat.model.RestaurantProvider;
+import com.neat.model.SessionManager;
+import com.neat.view.fragments.ItemFeaturedFragment;
+import com.neat.view.fragments.ItemListFragment;
+import com.neat.view.fragments.ItemListSmallFragment;
+import com.neat.view.fragments.OrdersFragment;
+import com.neat.model.classes.Item;
+import com.neat.model.classes.MenuSection;
+import com.neat.model.classes.Order;
+import com.neat.model.classes.Restaurant;
 
 import java.util.List;
 
@@ -39,13 +43,14 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class RestaurantActivity extends AppCompatActivity
+public class MenuActivity extends AppCompatActivity
         implements RestaurantProvider.Callback,
         SessionManager.OnOrdersPlacedListener {
 
-    private static final String TAG = RestaurantActivity.class.getSimpleName();
+    private static final String TAG = MenuActivity.class.getSimpleName();
 
     private static final int REQUEST_ITEM_DETAILS = 15;
+
 
     @Inject
     RestaurantProvider restaurantProvider;
@@ -105,11 +110,12 @@ public class RestaurantActivity extends AppCompatActivity
         if (mAuth.getCurrentUser() == null) { // don't even bother
             goToLogin();
             return;
+
         }
 
-        setContentView(R.layout.activity_restaurant);
+        setContentView(R.layout.activity_menu_selection);
+        NeatApplication.getComponent(this).application().createSessionComponent().inject(this);
 
-        NeatApplication.getComponent(this).inject(this);
         ButterKnife.bind(this);
 
         ordersFragment = (OrdersFragment) getFragmentManager().findFragmentById(R.id.orders_fragment);
@@ -182,14 +188,15 @@ public class RestaurantActivity extends AppCompatActivity
         super.onStart();
         if (restaurant == null)
             restaurantProvider.getRestaurant("lateral", this);
-
-        sessionManager.addOnOrdersPlacedListener(this);
+        if (sessionManager != null)
+            sessionManager.addOnOrdersPlacedListener(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        sessionManager.removeOnOrdersPlacedListener(this);
+        if (sessionManager != null)
+            sessionManager.removeOnOrdersPlacedListener(this);
     }
 
     @Override
@@ -197,7 +204,7 @@ public class RestaurantActivity extends AppCompatActivity
 
         this.restaurant = restaurant;
 
-        sessionManager.newSession(restaurant);
+        sessionManager.newSession(restaurant, mAuth.getCurrentUser().getUid(), "tableId");
 
         ordersFragment.setStateHidden();
 
@@ -222,14 +229,15 @@ public class RestaurantActivity extends AppCompatActivity
                         transaction.add(R.id.main_sections_container, ItemFeaturedFragment.newInstance(section), null);
                         break;
                     case list:
+                    default:
                         transaction.add(R.id.main_sections_container, ItemListFragment.newInstance(section), null);
                         break;
 
                 }
             }
-            // default
+            // default to list
             else {
-                // TODO
+                transaction.add(R.id.main_sections_container, ItemListFragment.newInstance(section), null);
             }
 
         }
@@ -274,21 +282,18 @@ public class RestaurantActivity extends AppCompatActivity
 
     public void displayItemDetailsView(View view, Item item) {
 
-        ordersFragment.setStateHidden();
-        ordersFragment.discardOrdersButtonTooltip();
-
         Intent intent = new Intent(this, ItemDetailsActivity.class);
         intent.putExtra(ItemDetailsActivity.EXTRA_ITEM, item);
 
-        View statusBar = findViewById(android.R.id.statusBarBackground);
         View navigationBar = findViewById(android.R.id.navigationBarBackground);
 
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this,
-//                        Pair.create(statusBar, Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME),
-                        Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME),
 //                        Pair.create(view.findViewById(R.id.item_title), "item_title"),
-                        Pair.create(view.findViewById(R.id.item_image), "item_image"));
+                        Pair.create(view.findViewById(R.id.item_image), "item_image"),
+                        Pair.create(view.findViewById(R.id.item_layout), "item_layout"),
+                        Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME)
+                );
 
         startActivityForResult(intent, REQUEST_ITEM_DETAILS, options.toBundle());
 
@@ -313,11 +318,10 @@ public class RestaurantActivity extends AppCompatActivity
             if (resultCode == ItemDetailsActivity.RESULT_ITEM_ADDED) {
                 sessionManager.addPendingItem(
                         (Item) data.getSerializableExtra(ItemDetailsActivity.EXTRA_ITEM),
-                        data.getIntExtra(ItemDetailsActivity.EXTRA_ITEM_COUNT, -1)) ;
+                        data.getIntExtra(ItemDetailsActivity.EXTRA_ITEM_COUNT, -1));
             }
         }
 
-        ordersFragment.setStateCollapsedIfHasOrders();
     }
 
     @Override

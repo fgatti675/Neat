@@ -7,8 +7,8 @@ import com.facebook.FacebookSdk;
 import com.neat.dagger.AppModule;
 import com.neat.dagger.ApplicationComponent;
 import com.neat.dagger.DaggerApplicationComponent;
-import com.neat.dagger.RestaurantModule;
-import com.neat.dagger.SessionManagerModule;
+import com.neat.dagger.SessionComponent;
+import com.neat.dagger.SessionModule;
 
 /**
  * Created by f.gatti.gomez on 06/01/2017.
@@ -17,16 +17,14 @@ import com.neat.dagger.SessionManagerModule;
 public class NeatApplication extends Application {
 
     private ApplicationComponent applicationComponent;
+    private SessionComponent sessionComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         applicationComponent = DaggerApplicationComponent.builder()
-                // list of modules that are part of this component need to be created here too
                 .appModule(new AppModule(this))
-                .restaurantModule(new RestaurantModule())
-                .sessionManagerModule(new SessionManagerModule())
                 .build();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -40,4 +38,12 @@ public class NeatApplication extends Application {
         return ((NeatApplication) context.getApplicationContext()).applicationComponent;
     }
 
+    public SessionComponent createSessionComponent() {
+        sessionComponent = applicationComponent.plus(new SessionModule());
+        return sessionComponent;
+    }
+
+    public SessionComponent getSessionComponent() {
+        return sessionComponent;
+    }
 }

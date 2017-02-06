@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:layout_weight="3">
 
-        <com.neat.util.AnimatedLogoView
+        <com.neat.view.util.AnimatedLogoView
             android:layout_width="360dp"
             android:layout_height="120dp"
             android:layout_gravity="center" />

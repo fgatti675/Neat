@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.neat;
+package com.neat.view;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -45,6 +45,13 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.neat.R;
 
 import java.util.Arrays;
 
@@ -77,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            startActivity(new Intent(this, RestaurantActivity.class));
+            startActivity(new Intent(this, MenuActivity.class));
             finish();
             return;
         }
@@ -212,6 +219,9 @@ public class LoginActivity extends AppCompatActivity implements
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
+
+
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -223,7 +233,34 @@ public class LoginActivity extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                             hideProgressDialog();
                         } else {
-                            startActivity(new Intent(LoginActivity.this, RestaurantActivity.class));
+
+                            DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+                            DatabaseReference users = database.child("users");
+                            final FirebaseUser firebaseUser = task.getResult().getUser();
+                            DatabaseReference userRef = users.child(firebaseUser.getUid());
+                            if(userRef == null){
+                                userRef = users.push();
+                            }
+                            userRef.runTransaction(new Transaction.Handler() {
+                                @Override
+                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                    mutableData.child("name").setValue(firebaseUser.getDisplayName());
+                                    mutableData.child("email").setValue(firebaseUser.getEmail());
+                                    mutableData.child("photoUrl").setValue(firebaseUser.getPhotoUrl().toString());
+                                    return Transaction.success(mutableData);
+                                }
+
+                                @Override
+                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                    if (databaseError != null) {
+                                        mAuth.signOut();
+                                        hideProgressDialog();
+                                        return;
+                                    }
+                                    startActivity(new Intent(LoginActivity.this, MenuActivity.class));
+                                }
+                            });
+
                         }
 
                     }

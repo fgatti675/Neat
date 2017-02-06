@@ -1,4 +1,4 @@
-package com.neat.model;
+package com.neat.model.classes;
 
 import java.io.Serializable;
 
@@ -52,4 +52,5 @@ public class Item implements Serializable {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }

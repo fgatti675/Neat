@@ -8,25 +8,23 @@
 
         <variable
             name="item"
-            type="com.neat.model.Item" />
-
-        <variable
-            name="handlers"
-            type="com.neat.util.AddItemToOrdersHandler" />
+            type="com.neat.viewmodel.ItemViewModel" />
 
     </data>
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:gravity="center"
-        android:onClick="@{(view) -> handlers.onItemClick(view, item)}"
+        android:onClick="@{(view) -> item.onItemClick(view, item)}"
         android:orientation="horizontal"
         android:paddingBottom="@dimen/small_padding"
         android:paddingEnd="@dimen/large_padding"
         android:paddingStart="@dimen/large_padding"
-        android:paddingTop="@dimen/small_padding">
+        android:paddingTop="@dimen/small_padding"
+        android:transitionName="item_layout">
 
         <ImageView
             android:id="@+id/item_icon"

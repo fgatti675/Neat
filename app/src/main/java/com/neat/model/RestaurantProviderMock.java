@@ -1,9 +1,9 @@
-package com.neat;
+package com.neat.model;
 
-import com.neat.model.Item;
-import com.neat.model.Menu;
-import com.neat.model.MenuSection;
-import com.neat.model.Restaurant;
+import com.neat.model.classes.Item;
+import com.neat.model.classes.Menu;
+import com.neat.model.classes.MenuSection;
+import com.neat.model.classes.Restaurant;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package com.neat;
+package com.neat.model;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -8,18 +8,26 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.neat.model.Item;
-import com.neat.model.Menu;
-import com.neat.model.MenuSection;
-import com.neat.model.Restaurant;
+import com.neat.model.classes.Item;
+import com.neat.model.classes.Menu;
+import com.neat.model.classes.MenuSection;
+import com.neat.model.classes.Restaurant;
 
 import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 
 /**
  * Created by f.gatti.gomez on 10/10/16.
  */
+@Singleton
 public class RestaurantProvider {
+
+    @Inject
+    public RestaurantProvider() {
+    }
 
     public interface Callback {
         void onRestaurantLoaded(Restaurant restaurant);

@@ -1,4 +1,4 @@
-package com.neat.util;
+package com.neat.viewmodel;
 
 import android.databinding.BindingAdapter;
 import android.support.annotation.DrawableRes;
@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.neat.R;
-import com.neat.model.Item;
+import com.neat.model.classes.Item;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -127,23 +127,11 @@ public class BindingUtils {
         view.setText(formattedPrice);
     }
 
-    @BindingAdapter({"orderItem", "orderCount"})
-    public static void bindOrderPriceText(TextView view, Item item, int count) {
-        String formattedPrice = null;
-        float totalPrice = count * item.price;
-        if (item.currency.equals("EUR")) {
-            formattedPrice = String.format(Locale.getDefault(), "%.2f€", totalPrice);
-        } else {
-            formattedPrice = String.format(Locale.getDefault(), "%.2f %s", totalPrice, item.currency);
-        }
-        view.setText(formattedPrice);
-    }
-
     @BindingAdapter({"itemImage"})
-    public static void bindImage(ImageView view, Item item) {
-        if (item.imageUrl != null) {
+    public static void bindImage(ImageView view, ItemViewModel itemViewModel) {
+        if (itemViewModel.item.imageUrl != null) {
             Glide.with(view.getContext())
-                    .load(item.imageUrl)
+                    .load(itemViewModel.item.imageUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontTransform()
                     .into(view);
@@ -153,11 +141,11 @@ public class BindingUtils {
     }
 
     @BindingAdapter({"itemImageDontTransform"})
-    public static void bindImageDontTransform(ImageView view, Item item) {
-        if (item.imageUrl != null) {
+    public static void bindImageDontTransform(ImageView view, ItemViewModel itemViewModel) {
+        if (itemViewModel.item.imageUrl != null) {
             Glide.with(view.getContext())
-                    .load(item.imageUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .load(itemViewModel.item.imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .into(view);
         } else {
             //TODO

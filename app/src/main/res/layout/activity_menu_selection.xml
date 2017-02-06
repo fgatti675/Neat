@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            tools:context="com.neat.RestaurantActivity">
+            tools:context="com.neat.view.MenuActivity">
 
             <android.support.design.widget.AppBarLayout
                 android:id="@+id/app_bar"
@@ -130,7 +130,7 @@
 
     <fragment
         android:id="@+id/orders_fragment"
-        android:name="com.neat.fragments.OrdersFragment"
+        android:name="com.neat.view.fragments.OrdersFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_orders" />

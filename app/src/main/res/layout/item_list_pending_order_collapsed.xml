@@ -7,8 +7,8 @@
     <data>
 
         <variable
-            name="order"
-            type="com.neat.model.Order" />
+            name="orderviewmodel"
+            type="com.neat.viewmodel.OrderViewModel" />
 
         <import type="android.view.View" />
 
@@ -20,17 +20,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="@dimen/tiny_padding"
         android:gravity="center"
         android:orientation="horizontal"
-        android:transitionName='@{order.item.id + "_view"}'>
+        android:padding="@dimen/tiny_padding"
+        android:transitionName='@{orderviewmodel.order.item.id + "_view"}'>
 
         <ImageView
             android:id="@+id/item_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="fitCenter"
-            android:transitionName='@{order.item.id + "_icon"}'
+            android:transitionName='@{orderviewmodel.order.item.id + "_icon"}'
             app:itemIcon="@{order.item}"
             tools:src="@drawable/item_fork" />
 
@@ -41,7 +41,7 @@
             android:layout_margin="@dimen/tiny_padding"
             android:text='@{"x" + order.count}'
             android:textAppearance="@style/Text.Small.White"
-            android:transitionName='@{order.item.id + "_count"}'
+            android:transitionName='@{orderviewmodel.order.item.id + "_count"}'
             android:visibility="@{order.count > 1 ? View.VISIBLE : View.GONE}"
             tools:text="x2"
             tools:visibility="visible" />

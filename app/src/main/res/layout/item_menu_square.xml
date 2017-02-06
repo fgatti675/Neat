@@ -8,11 +8,7 @@
 
         <variable
             name="item"
-            type="com.neat.model.Item" />
-
-        <variable
-            name="handlers"
-            type="com.neat.util.AddItemToOrdersHandler" />
+            type="com.neat.viewmodel.ItemViewModel" />
 
     </data>
 
@@ -21,14 +17,17 @@
         android:layout_height="wrap_content">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/item_layout"
             android:layout_width="@dimen/food_item_side"
             android:layout_height="@dimen/food_item_side"
-            android:onClick="@{(view) -> handlers.onItemClick(view, item)}">
+            android:onClick="@{(view) -> item.onItemClick(view, item)}"
+            android:transitionName="item_layout">
 
             <ImageView
                 android:id="@+id/item_image"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:scaleType="fitCenter"
                 android:transitionName="item_image"
                 app:itemImage="@{item}"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -93,7 +92,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="16dp"
                 android:background="?selectableItemBackgroundBorderless"
-                android:onClick="@{(view) -> handlers.onDirectAddItemButtonClicked(view, item)}"
+                android:onClick="@{(view) -> item.onDirectAddItemButtonClicked(view, item)}"
                 android:tint="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

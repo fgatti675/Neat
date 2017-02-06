@@ -6,20 +6,18 @@
 
         <variable
             name="item"
-            type="com.neat.model.Item" />
-
-        <variable
-            name="handlers"
-            type="com.neat.util.AddItemToOrdersHandler" />
+            type="com.neat.viewmodel.ItemViewModel" />
 
     </data>
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:onClick="@{(view) -> handlers.onItemClick(view, item)}"
-        android:padding="@dimen/large_padding">
+        android:onClick="@{(view) -> item.onItemClick(view, item)}"
+        android:padding="@dimen/large_padding"
+        android:transitionName="item_layout">
 
         <ImageView
             android:id="@+id/item_image"
@@ -28,11 +26,11 @@
             android:scaleType="centerCrop"
             android:transitionName="item_image"
             app:itemImage="@{item}"
-            tools:background="@color/colorAccent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@color/colorAccent" />
 
         <TextView
             android:id="@+id/item_title"
@@ -51,9 +49,9 @@
             android:id="@+id/add_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:onClick="@{(view) -> handlers.onDirectAddItemButtonClicked(view, item)}"
-            android:tint="@color/text_secondary_dark"
             android:layout_marginEnd="@dimen/small_padding"
+            android:onClick="@{(view) -> item.onDirectAddItemButtonClicked(view, item)}"
+            android:tint="@color/text_secondary_dark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/item_image"
             app:srcCompat="@drawable/ic_add_white" />
@@ -72,7 +70,7 @@
             android:id="@+id/item_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/default_padding"
+            android:layout_marginStart="@dimen/large_padding"
             android:textAppearance="@style/Text.Secondary"
             app:itemPrice="@{item}"
             app:layout_constraintBottom_toBottomOf="parent"

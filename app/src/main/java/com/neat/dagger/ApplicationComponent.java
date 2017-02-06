@@ -2,29 +2,20 @@ package com.neat.dagger;
 
 
 import com.neat.NeatApplication;
-import com.neat.RestaurantActivity;
-import com.neat.fragments.ItemFeaturedFragment;
-import com.neat.fragments.ItemListFragment;
-import com.neat.fragments.ItemListSmallFragment;
-import com.neat.fragments.OrdersFragment;
+import com.neat.model.RestaurantProvider;
 
 import javax.inject.Singleton;
 
 import dagger.Component;
 
 @Singleton
-@Component(modules = {AppModule.class, RestaurantModule.class, SessionManagerModule.class})
+@Component(modules = {AppModule.class, RestaurantModule.class})
 public interface ApplicationComponent {
 
-    void inject(RestaurantActivity activity);
-
-    void inject(OrdersFragment fragment);
-
-    void inject(ItemListFragment fragment);
-
-    void inject(ItemFeaturedFragment fragment);
-
-    void inject(ItemListSmallFragment fragment);
+    RestaurantProvider restaurantProvider();
 
     NeatApplication application();
+
+    SessionComponent plus(SessionModule sessionModule);
+
 }

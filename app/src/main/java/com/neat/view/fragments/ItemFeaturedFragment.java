@@ -1,4 +1,4 @@
-package com.neat.fragments;
+package com.neat.view.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 
 import com.neat.NeatApplication;
 import com.neat.R;
-import com.neat.RestaurantActivity;
-import com.neat.SessionManager;
+import com.neat.view.MenuActivity;
+import com.neat.model.SessionManager;
 import com.neat.databinding.ItemMenuSquareBinding;
 import com.neat.databinding.LayoutSectionHeaderBinding;
-import com.neat.model.Item;
-import com.neat.model.MenuSection;
-import com.neat.util.AddItemToOrdersHandler;
+import com.neat.model.classes.Item;
+import com.neat.model.classes.MenuSection;
+import com.neat.viewmodel.AddItemToOrdersHandler;
 
 import javax.inject.Inject;
 
@@ -29,7 +29,7 @@ public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHan
 
     private static final String ARG_SECTION = "ARG_SECTION";
 
-    RestaurantActivity restaurantActivity;
+    MenuActivity menuActivity;
 
     MenuSection section;
 
@@ -53,11 +53,16 @@ public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHan
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (!(context instanceof RestaurantActivity)) {
-            throw new RuntimeException("This fragment must be created in a RestaurantActivity");
+        if (!(context instanceof MenuActivity)) {
+            throw new RuntimeException("This fragment must be created in a MenuActivity");
         }
-        restaurantActivity = (RestaurantActivity) context;
-        NeatApplication.getComponent(context).inject(this);
+        menuActivity = (MenuActivity) context;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        NeatApplication.getComponent(getActivity()).application().getSessionComponent().inject(this);
     }
 
     public ItemFeaturedFragment() {
@@ -91,7 +96,7 @@ public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHan
 
     @Override
     public void onItemClick(View view, Item item) {
-        restaurantActivity.displayItemDetailsView(view, item);
+        menuActivity.displayItemDetailsView(view, item);
     }
 
     @Override
