@@ -8,7 +8,7 @@
 
         <variable
             name="orderviewmodel"
-            type="com.neat.viewmodel.OrderViewModel" />
+            type="com.neat.viewmodel.PendingOrderViewModel" />
 
         <import type="android.view.View" />
 
@@ -23,15 +23,15 @@
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="@dimen/tiny_padding"
-        android:transitionName='@{orderviewmodel.order.item.id + "_view"}'>
+        android:transitionName='@{orderviewmodel.id + "_view"}'>
 
         <ImageView
             android:id="@+id/item_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:scaleType="fitCenter"
-            android:transitionName='@{orderviewmodel.order.item.id + "_icon"}'
-            app:itemIcon="@{order.item}"
+            android:transitionName='@{orderviewmodel.id + "_icon"}'
+            app:itemIcon="@{orderviewmodel.icon}"
             tools:src="@drawable/item_fork" />
 
         <TextView
@@ -39,10 +39,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/tiny_padding"
-            android:text='@{"x" + order.count}'
+            android:text='@{"x" + orderviewmodel.count}'
             android:textAppearance="@style/Text.Small.White"
-            android:transitionName='@{orderviewmodel.order.item.id + "_count"}'
-            android:visibility="@{order.count > 1 ? View.VISIBLE : View.GONE}"
+            android:transitionName='@{orderviewmodel.id + "_count"}'
+            android:visibility="@{orderviewmodel.count > 1 ? View.VISIBLE : View.GONE}"
             tools:text="x2"
             tools:visibility="visible" />
 

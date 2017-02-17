@@ -30,6 +30,7 @@ import java.util.UUID;
 
         Restaurant restaurant = new Restaurant();
 
+        restaurant.id = "lateral-test";
         restaurant.title = "Lateral";
         restaurant.subtitle = "Vive la experiencia";
         restaurant.headerUrl = "http://www.lateral.com/wp-content/uploads/2015/04/cabecera-carta.jpg";

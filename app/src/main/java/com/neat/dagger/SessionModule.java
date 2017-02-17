@@ -1,22 +1,21 @@
 package com.neat.dagger;
 
+import com.neat.model.SessionManager;
+import com.neat.model.classes.User;
+
+import javax.inject.Named;
+
 import dagger.Module;
+import dagger.Provides;
 
 @Module
 public class SessionModule {
 
-//    Restaurant restaurant;
-//
-//    @Inject
-//    public SessionModule(Restaurant restaurant) {
-//        this.restaurant = restaurant;
-//    }
-//
-//    @Provides
-//    @SessionScope
-//    SessionManager providesSessionManager() {
-//        return new SessionManager(null);
-//    }
+    @Provides
+    @SessionScope
+    SessionManager providesSessionManager(@Named("logged_user") User user) {
+        return new SessionManager(user);
+    }
 
 
 }

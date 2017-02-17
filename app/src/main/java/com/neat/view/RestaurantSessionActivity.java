@@ -7,50 +7,53 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.Window;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.neat.NeatApplication;
+import com.neat.PaymentActivity;
 import com.neat.R;
+import com.neat.databinding.ActivityRestaurantSessionSelectionBinding;
 import com.neat.model.RestaurantProvider;
 import com.neat.model.SessionManager;
+import com.neat.model.classes.MenuSection;
+import com.neat.model.classes.Order;
+import com.neat.model.classes.Restaurant;
+import com.neat.model.classes.Session;
+import com.neat.model.classes.User;
 import com.neat.view.fragments.ItemFeaturedFragment;
 import com.neat.view.fragments.ItemListFragment;
 import com.neat.view.fragments.ItemListSmallFragment;
 import com.neat.view.fragments.OrdersFragment;
-import com.neat.model.classes.Item;
-import com.neat.model.classes.MenuSection;
-import com.neat.model.classes.Order;
-import com.neat.model.classes.Restaurant;
+import com.neat.viewmodel.RestaurantActivityViewModel;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MenuActivity extends AppCompatActivity
+public class RestaurantSessionActivity extends AppCompatActivity
         implements RestaurantProvider.Callback,
+        SessionManager.OnSessionJoinedCallbacks,
         SessionManager.OnOrdersPlacedListener {
 
-    private static final String TAG = MenuActivity.class.getSimpleName();
-
-    private static final int REQUEST_ITEM_DETAILS = 15;
-
+    private static final String TAG = RestaurantSessionActivity.class.getSimpleName();
 
     @Inject
     RestaurantProvider restaurantProvider;
@@ -58,12 +61,19 @@ public class MenuActivity extends AppCompatActivity
     @Inject
     SessionManager sessionManager;
 
-    private FirebaseAuth mAuth;
+    @Inject
+    @Named("logged_user")
+    User user;
+
+    RestaurantActivityViewModel restaurantActivityViewModel;
 
     private OrdersFragment ordersFragment;
 
     @Bind(R.id.toolbar_layout)
     CollapsingToolbarLayout collapsingToolbarLayout;
+
+    @Bind(R.id.main_layout)
+    ViewGroup mainLayout;
 
     @Bind(R.id.main_sections_container)
     ViewGroup mainSectionsContainer;
@@ -105,18 +115,19 @@ public class MenuActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() == null) { // don't even bother
-            goToLogin();
-            return;
-
-        }
-
-        setContentView(R.layout.activity_menu_selection);
         NeatApplication.getComponent(this).application().createSessionComponent().inject(this);
 
+        if (user == null) { // don't even bother
+            goToLogin();
+            return;
+        }
+
+        setContentView(R.layout.activity_restaurant_session_selection);
+
         ButterKnife.bind(this);
+
+        sessionManager.addOnSessionJoinedCallbacks(this);
+        sessionManager.addOnOrdersPlacedListener(this);
 
         ordersFragment = (OrdersFragment) getFragmentManager().findFragmentById(R.id.orders_fragment);
 
@@ -138,6 +149,24 @@ public class MenuActivity extends AppCompatActivity
 
         payAction = toolbar.findViewById(R.id.action_pay);
         payAction.setVisibility(View.GONE);
+        payAction.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ViewAnimationUtils.createCircularReveal(
+                        payAction,
+                        payAction.getMeasuredWidth() / 2,
+                        payAction.getMeasuredHeight() / 2, 0,
+                        Math.max(payAction.getWidth(), payAction.getHeight()) / 2)
+                        .start();
+                payAction.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+        payAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RestaurantSessionActivity.this, PaymentActivity.class));
+            }
+        });
         menuAction = toolbar.findViewById(R.id.action_menu);
 
 //        final float offsetX = getResources().getDimension(R.dimen.pay_button_toolbar_offset_x_collapsed);
@@ -175,12 +204,13 @@ public class MenuActivity extends AppCompatActivity
             }
         });
 
-        setTableParticipants();
-
     }
 
-    private void setTableParticipants() {
-        tableParticipantsView.setText(getString(R.string.table_participants, "5", mAuth.getCurrentUser().getDisplayName()));
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sessionManager.removeOnOrdersPlacedListener(this);
+        sessionManager.removeOnSessionJoinedCallbacks(this);
     }
 
     @Override
@@ -188,27 +218,46 @@ public class MenuActivity extends AppCompatActivity
         super.onStart();
         if (restaurant == null)
             restaurantProvider.getRestaurant("lateral", this);
-        if (sessionManager != null)
-            sessionManager.addOnOrdersPlacedListener(this);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (sessionManager != null)
-            sessionManager.removeOnOrdersPlacedListener(this);
-    }
 
     @Override
-    public void onRestaurantLoaded(Restaurant restaurant) {
+    public void onRestaurantLoaded(final Restaurant restaurant) {
 
         this.restaurant = restaurant;
 
-        sessionManager.newSession(restaurant, mAuth.getCurrentUser().getUid(), "tableId");
+        sessionManager.joinSession(restaurant, restaurant.tables.values().iterator().next().id);
+
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+//            // get the center for the clipping circle
+//            int cx = payButton.getMeasuredWidth() / 2;
+//            int cy = payButton.getMeasuredHeight() / 2;
+//
+//            // get the final radius for the clipping circle
+//            int finalRadius = Math.max(payButton.getWidth(), payButton.getHeight()) / 2;
+//
+//            // create the animator for this view (the start radius is zero)
+//            Animator anim = ViewAnimationUtils.createCircularReveal(payButton, cx, cy, 0, finalRadius);
+//
+//            // make the view visible and start the animation
+//            payButton.setVisibility(View.VISIBLE);
+//            anim.start();
+//        }
+    }
+
+
+    @Override
+    public void onSessionJoined(final Session session) {
+
+        Log.d(TAG, "onSessionJoined: ");
+        restaurantActivityViewModel = new RestaurantActivityViewModel(RestaurantSessionActivity.this, session);
+
+        ActivityRestaurantSessionSelectionBinding binding = ActivityRestaurantSessionSelectionBinding.bind(mainLayout);
+        binding.setViewModel(restaurantActivityViewModel);
 
         ordersFragment.setStateHidden();
 
-        Glide.with(this).load(restaurant.headerUrl)
+        Glide.with(RestaurantSessionActivity.this).load(restaurant.headerUrl)
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(header);
@@ -243,21 +292,6 @@ public class MenuActivity extends AppCompatActivity
         }
         transaction.commitAllowingStateLoss();
 
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-//            // get the center for the clipping circle
-//            int cx = payButton.getMeasuredWidth() / 2;
-//            int cy = payButton.getMeasuredHeight() / 2;
-//
-//            // get the final radius for the clipping circle
-//            int finalRadius = Math.max(payButton.getWidth(), payButton.getHeight()) / 2;
-//
-//            // create the animator for this view (the start radius is zero)
-//            Animator anim = ViewAnimationUtils.createCircularReveal(payButton, cx, cy, 0, finalRadius);
-//
-//            // make the view visible and start the animation
-//            payButton.setVisibility(View.VISIBLE);
-//            anim.start();
-//        }
     }
 
     @Override
@@ -274,69 +308,45 @@ public class MenuActivity extends AppCompatActivity
     }
 
     private void logout() {
+        // TODO: abstract away
         // Firebase sign out
-        mAuth.signOut();
+        FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
         goToLogin();
-    }
-
-    public void displayItemDetailsView(View view, Item item) {
-
-        Intent intent = new Intent(this, ItemDetailsActivity.class);
-        intent.putExtra(ItemDetailsActivity.EXTRA_ITEM, item);
-
-        View navigationBar = findViewById(android.R.id.navigationBarBackground);
-
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this,
-//                        Pair.create(view.findViewById(R.id.item_title), "item_title"),
-                        Pair.create(view.findViewById(R.id.item_image), "item_image"),
-                        Pair.create(view.findViewById(R.id.item_layout), "item_layout"),
-                        Pair.create(navigationBar, Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME)
-                );
-
-        startActivityForResult(intent, REQUEST_ITEM_DETAILS, options.toBundle());
-
-//        final FragmentManager fragmentManager = getFragmentManager();
-//
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        itemDetailsFragment = ItemDetailsFragment.newInstance(item);
-//        itemDetailsFragment.setOnItemDetailsClosedListener(this);
-////        fragment.setSharedElementEnterTransition(new AutoTransition());
-//        itemDetailsFragment.setEnterTransition(new Slide(Gravity.END));
-//        transaction.addSharedElement(view.findViewById(R.id.item_title), "item_title");
-//        transaction.addSharedElement(view.findViewById(R.id.item_image), "item_image");
-//        transaction.replace(R.id.main_layout, itemDetailsFragment, null);
-//        transaction.addToBackStack("item_details");
-//        transaction.commitAllowingStateLoss();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_ITEM_DETAILS) {
+        if (requestCode == ItemDetailsActivity.REQUEST_ITEM_DETAILS) {
             if (resultCode == ItemDetailsActivity.RESULT_ITEM_ADDED) {
-                sessionManager.addPendingItem(
-                        (Item) data.getSerializableExtra(ItemDetailsActivity.EXTRA_ITEM),
-                        data.getIntExtra(ItemDetailsActivity.EXTRA_ITEM_COUNT, -1));
+//                sessionViewModel.addPendingOrder(
+//                        (Item) data.getSerializableExtra(ItemDetailsActivity.EXTRA_ITEM),
+//                        data.getIntExtra(ItemDetailsActivity.EXTRA_ITEM_COUNT, -1));
             }
         }
 
     }
 
     @Override
-    public void onOrdersPlaced(List<Order> newlyPlacedOrders) {
+    public void onOrdersPlaced(Set<Order> newlyPlacedOrders) {
         /*
          * Reveal pay action
          */
         if (payAction.getVisibility() != View.VISIBLE) {
             payAction.setVisibility(View.VISIBLE);
-            ViewAnimationUtils.createCircularReveal(
-                    payAction,
-                    payAction.getMeasuredWidth() / 2,
-                    payAction.getMeasuredHeight() / 2, 0,
-                    Math.max(payAction.getWidth(), payAction.getHeight()) / 2)
-                    .start();
         }
+
+    }
+
+    @Override
+    public void onOrdersPlacedError() {
+        Toast.makeText(this, R.string.error_placing_orders, Toast.LENGTH_LONG).show();
+    }
+
+
+    @Override
+    public void onSessionJoinFail() {
+        // TODO
     }
 }

@@ -1,23 +1,30 @@
 package com.neat.model.classes;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by f.gatti.gomez on 09/10/16.
  */
-
 public class Session implements Serializable {
 
+    public String id;
     public Restaurant restaurant;
+    public Date creationDate;
+    public Table table;
+
     public String currency;
 
-    public List<User> users = new ArrayList<>();
+    public Map<String, User> users = new HashMap<>();
 
-    public List<Order> pendingOrders = new ArrayList<>();
-    public List<Order> requestedOrders = new ArrayList<>();
+    public Set<Order> pendingOrders = new LinkedHashSet<>();
+    public Set<Order> requestedOrders = new LinkedHashSet<>();
 
+    public boolean active;
     public boolean paid;
 
     public boolean hasPendingOrders() {
@@ -28,62 +35,20 @@ public class Session implements Serializable {
         return !pendingOrders.isEmpty() || !requestedOrders.isEmpty();
     }
 
-    public boolean existingRequestedOrders() {
+    public boolean hasRequestedOrders() {
         return !requestedOrders.isEmpty();
     }
 
-    public Order addPendingItem(Item item, int count) {
-
-        Order order = null;
-
-        for (Order prevOrder : pendingOrders) {
-            // item is already in the pending queue
-            if (prevOrder.item.equals(item)) {
-                order = prevOrder;
-                for (int i = 0; i < count; i++) {
-                    order.count++;
-                }
-            }
-        }
-
-        if (order == null) {
-            order = new Order();
-            order.item = item;
-            order.count = count;
-
-            pendingOrders.add(order);
-        }
-
-        return order;
-    }
-
-    public List<Order> placePendingOrders() {
-
-        List<Order> newlyPlacedOrders = new ArrayList<>();
-
-        for (Order order : pendingOrders) {
-            requestedOrders.add(order);
-            newlyPlacedOrders.add(order);
-        }
-        pendingOrders.clear();
-
-        return newlyPlacedOrders;
-    }
-
     public int getPendingItemsCount() {
-        int count = 0;
-        for (Order order : pendingOrders) {
-            count += order.count;
-        }
-        return count;
+        return pendingOrders.size();
     }
 
     public float getTotalSum() {
         float sum = 0F;
         for (Order order : requestedOrders) {
-            sum += order.count * order.item.price;
+            sum += order.item.price;
         }
         return sum;
-
     }
+
 }

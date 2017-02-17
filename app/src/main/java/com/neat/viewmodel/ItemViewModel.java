@@ -1,21 +1,30 @@
 package com.neat.viewmodel;
 
-import android.content.Context;
+import android.app.Activity;
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.view.View;
 
+import com.neat.model.SessionManager;
 import com.neat.model.classes.Item;
+import com.neat.view.ItemDetailsActivity;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
- * Created by f.gatti.gomez on 09/10/16.
+ * ViewModel representation for
  */
 
-public class ItemViewModel implements Serializable {
+public class ItemViewModel extends BaseObservable implements Serializable {
 
+    Activity activity;
+    SessionManager sessionManager;
     Item item;
 
-    public ItemViewModel(Context context, Item item) {
+    public ItemViewModel(Activity activity, SessionManager sessionManager, Item item) {
+        this.activity = activity;
+        this.sessionManager = sessionManager;
         this.item = item;
     }
 
@@ -36,43 +45,41 @@ public class ItemViewModel implements Serializable {
     }
 
 
-    void onItemClick(View view, Item item){
-
+    public void openItemDetails(View view) {
+        ItemDetailsActivity.startItemDetailsActivity(activity, view, item);
     }
 
-    void onDirectAddItemButtonClicked(View view, Item item){
-
+    public void addPendingItemDirectly(View view) {
+        sessionManager.addPendingOrder(item, null);
     }
 
+    @Bindable
     public String getId() {
         return item.id;
     }
 
+    @Bindable
     public String getName() {
         return item.name;
     }
 
-    public boolean isFeatured() {
-        return item.featured;
-    }
-
+    @Bindable
     public String getDescription() {
         return item.description;
     }
 
-    public float getPrice() {
-        return item.price;
-    }
-
-    public String getCurrency() {
-        return item.currency;
-    }
-
+    @Bindable
     public String getIcon() {
         return item.icon;
     }
 
-    public String getImageUrl() {
-        return item.imageUrl;
+    @Bindable
+    public String getPriceText() {
+        String formattedPrice = null;
+        if (item.currency.equals("EUR"))
+            formattedPrice = String.format(Locale.getDefault(), "%.2f€", item.price);
+        else
+            formattedPrice = String.format(Locale.getDefault(), "%.2f %s", item.price, item.currency);
+        return formattedPrice;
     }
 }

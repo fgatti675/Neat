@@ -5,7 +5,7 @@
     <data>
 
         <variable
-            name="item"
+            name="itemViewModel"
             type="com.neat.viewmodel.ItemViewModel" />
     </data>
 
@@ -39,9 +39,9 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/orders_layout_sneak_peak"
             android:background="@color/white"
-            android:transitionName="item_layout"
-            android:layout_marginBottom="@dimen/orders_layout_sneak_peak">
+            android:transitionName="item_layout">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                     android:layout_height="300dp"
                     android:scaleType="centerCrop"
                     android:transitionName="item_image"
-                    app:itemImage="@{item}"
+                    app:itemImage="@{itemViewModel}"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -67,7 +67,7 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="@dimen/large_padding"
-                    android:text="@{item.name}"
+                    android:text="@{itemViewModel.name}"
                     android:textAppearance="@style/Text.Title"
                     android:transitionName="item_title"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -81,10 +81,10 @@
                     android:layout_height="24dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="@dimen/large_padding"
-                    app:itemIcon="@{item}"
                     android:tint="@color/text_secondary_dark"
-                    app:layout_constraintTop_toBottomOf="@+id/item_title"
-                    app:layout_constraintLeft_toLeftOf="parent" />
+                    app:itemIcon="@{itemViewModel.icon}"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/item_title" />
 
                 <TextView
                     android:id="@+id/item_price"
@@ -92,10 +92,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/large_padding"
                     android:textAppearance="@style/Text.Secondary"
-                    app:itemPrice="@{item}"
+                    android:text="@{itemViewModel.priceText}"
+                    app:layout_constraintBottom_toBottomOf="@id/item_icon"
                     app:layout_constraintLeft_toRightOf="@+id/item_icon"
                     app:layout_constraintTop_toTopOf="@id/item_icon"
-                    app:layout_constraintBottom_toBottomOf="@id/item_icon"
                     tools:text="2,40€" />
 
                 <android.support.design.widget.TextInputLayout
@@ -108,7 +108,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/item_price">
 
                     <EditText
-                        android:id="@+id/note_edit"
+                        android:id="@+id/additional_instructions_edit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/add_a_note"
@@ -135,10 +135,10 @@
                     android:layout_marginTop="@dimen/large_padding"
                     android:ems="1"
                     android:gravity="center"
-                    tools:text="1"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/note_edit_wrap" />
+                    app:layout_constraintTop_toBottomOf="@+id/note_edit_wrap"
+                    tools:text="1" />
 
                 <ImageButton
                     android:id="@+id/count_up"
@@ -156,13 +156,13 @@
 
 
         <Toolbar
-            android:elevation="2dp"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:background="@drawable/bg_toolbar_shadow"
-            android:fitsSystemWindows="true"
-            android:layout_gravity="top"/>
+            android:elevation="2dp"
+            android:fitsSystemWindows="true" />
 
 
     </FrameLayout>

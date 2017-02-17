@@ -36,13 +36,12 @@
         <item name="android:colorButtonNormal">@color/google_red</item>
     </style>
 
-    <style name="Button.Facebook" >
+    <style name="Button.Facebook">
         <item name="android:textColor">@color/white</item>
         <item name="android:colorButtonNormal">@color/facebook_blue</item>
     </style>
 
-    <style name="Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
-    </style>
+    <style name="Button.Borderless" parent="Widget.AppCompat.Button.Borderless"></style>
 
 
     <style name="Text" parent="TextAppearance.AppCompat.Body1">
@@ -138,22 +137,21 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="Text.Monospace" >
+    <style name="Text.Monospace">
         <item name="android:fontFamily">monospace</item>
     </style>
 
-    <style name="Text.Monospace.White" >
+    <style name="Text.Monospace.White">
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="Text.Display" parent="TextAppearance.AppCompat.Display2">
-    </style>
+    <style name="Text.Display" parent="TextAppearance.AppCompat.Display2"></style>
 
-    <style name="Text.Display.Monospace" >
+    <style name="Text.Display.Monospace">
         <item name="android:fontFamily">monospace</item>
     </style>
 
-    <style name="Text.Display.Monospace.White" >
+    <style name="Text.Display.Monospace.White">
         <item name="android:textColor">@color/white</item>
     </style>
 
@@ -167,5 +165,7 @@
         <item name="ttlm_padding">@dimen/larger_padding</item>
         <item name="android:textAppearance">@style/Text.Monospace.White</item>
     </style>
+
+    <style name="Neat.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

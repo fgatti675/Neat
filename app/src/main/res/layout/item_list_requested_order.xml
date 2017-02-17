@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -7,8 +5,8 @@
     <data>
 
         <variable
-            name="order"
-            type="com.neat.viewmodel.OrderViewModel" />
+            name="orderviewmodel"
+            type="com.neat.viewmodel.RequestedOrderViewModel" />
 
         <import type="android.view.View" />
 
@@ -18,9 +16,8 @@
         android:id="@+id/order_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
         android:gravity="center"
-        android:onClick="@{(view) -> order.onOrderClicked(view)}"
+        android:onClick="@{(view) -> orderviewmodel.onOrderClicked(view)}"
         android:orientation="horizontal"
         android:paddingBottom="@dimen/default_padding"
         android:paddingEnd="@dimen/large_padding"
@@ -43,7 +40,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="fitCenter"
             android:tint="@color/text_secondary_dark"
-            app:itemIcon="@{order.item}"
+            app:itemIcon="@{orderviewmodel.icon}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -54,9 +51,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/tiny_padding"
-            android:text='@{"x" + order.count}'
+            android:text='@{"x" + orderviewmodel.count}'
             android:textAppearance="@style/Text.Small.Mono"
-            android:visibility="@{order.count > 1 ? View.VISIBLE : View.GONE}"
+            android:visibility="@{orderviewmodel.count > 1 ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/item_icon"
             app:layout_constraintTop_toTopOf="parent"
@@ -67,24 +64,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/large_padding"
-            android:text="@{order.item.name}"
+            android:text="@{orderviewmodel.name}"
             android:textAppearance="@style/Text.Mono"
             app:layout_constraintLeft_toLeftOf="@+id/title_guideline"
             app:layout_constraintRight_toLeftOf="@+id/item_price"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="1/3 Mahou" />
-
-        <TextView
-            android:id="@+id/order_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/large_padding"
-            android:text="@string/on_the_way"
-            android:textAppearance="@style/Text.Caption.Mono"
+            tools:text="1/3 Mahou"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/title_guideline"
-            app:layout_constraintRight_toLeftOf="@+id/item_price"
-            app:layout_constraintTop_toBottomOf="@+id/item_title" />
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:id="@+id/item_price"
@@ -95,7 +84,7 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text='@{order.formattedPrice}'
+            android:text='@{orderviewmodel.formattedPrice}'
             tools:text="2,40€" />
 
     </android.support.constraint.ConstraintLayout>

@@ -18,6 +18,7 @@ package com.neat.view;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -84,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            startActivity(new Intent(this, MenuActivity.class));
+            startActivity(new Intent(this, RestaurantSessionActivity.class));
             finish();
             return;
         }
@@ -220,8 +221,6 @@ public class LoginActivity extends AppCompatActivity implements
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-
-
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -238,7 +237,7 @@ public class LoginActivity extends AppCompatActivity implements
                             DatabaseReference users = database.child("users");
                             final FirebaseUser firebaseUser = task.getResult().getUser();
                             DatabaseReference userRef = users.child(firebaseUser.getUid());
-                            if(userRef == null){
+                            if (userRef == null) {
                                 userRef = users.push();
                             }
                             userRef.runTransaction(new Transaction.Handler() {
@@ -246,7 +245,9 @@ public class LoginActivity extends AppCompatActivity implements
                                 public Transaction.Result doTransaction(MutableData mutableData) {
                                     mutableData.child("name").setValue(firebaseUser.getDisplayName());
                                     mutableData.child("email").setValue(firebaseUser.getEmail());
-                                    mutableData.child("photoUrl").setValue(firebaseUser.getPhotoUrl().toString());
+                                    Uri photoUrl = firebaseUser.getPhotoUrl();
+                                    if (photoUrl != null)
+                                        mutableData.child("photo_url").setValue(photoUrl.toString());
                                     return Transaction.success(mutableData);
                                 }
 
@@ -257,7 +258,7 @@ public class LoginActivity extends AppCompatActivity implements
                                         hideProgressDialog();
                                         return;
                                     }
-                                    startActivity(new Intent(LoginActivity.this, MenuActivity.class));
+                                    startActivity(new Intent(LoginActivity.this, RestaurantSessionActivity.class));
                                 }
                             });
 
@@ -274,7 +275,7 @@ public class LoginActivity extends AppCompatActivity implements
         if (i == R.id.google_sign_in_button) {
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(signInIntent, RC_SIGN_IN);
-        } else if(i == R.id.button_facebook_login){
+        } else if (i == R.id.button_facebook_login) {
             LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("email", "public_profile"));
         }
     }

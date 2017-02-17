@@ -15,9 +15,12 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
 
         <activity
-            android:name=".view.MenuActivity"
+            android:name=".view.RestaurantSessionActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Neat.NoActionBar">
@@ -52,7 +55,11 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:replace="android:theme" />
-        <activity android:name=".view.RestaurantSelectionActivity"></activity>
+        <activity android:name=".view.RestaurantSelectionActivity" />
+        <activity
+            android:name=".PaymentActivity"
+            android:label="@string/payment"
+            android:theme="@style/Neat"></activity>
     </application>
 
 </manifest>

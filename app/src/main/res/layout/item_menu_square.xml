@@ -7,7 +7,7 @@
     <data>
 
         <variable
-            name="item"
+            name="itemViewModel"
             type="com.neat.viewmodel.ItemViewModel" />
 
     </data>
@@ -20,7 +20,7 @@
             android:id="@+id/item_layout"
             android:layout_width="@dimen/food_item_side"
             android:layout_height="@dimen/food_item_side"
-            android:onClick="@{(view) -> item.onItemClick(view, item)}"
+            android:onClick="@{(view) -> itemViewModel.openItemDetails(view)}"
             android:transitionName="item_layout">
 
             <ImageView
@@ -29,7 +29,7 @@
                 android:layout_height="0dp"
                 android:scaleType="fitCenter"
                 android:transitionName="item_image"
-                app:itemImage="@{item}"
+                app:itemImage="@{itemViewModel}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -52,7 +52,7 @@
                 android:layout_height="@dimen/default_icon"
                 android:layout_marginBottom="16dp"
                 android:layout_marginStart="16dp"
-                app:itemIcon="@{item}"
+                app:itemIcon="@{itemViewModel.icon}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:srcCompat="@drawable/item_apple" />
@@ -65,7 +65,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:maxLines="6"
-                android:text="@{item.name}"
+                android:text="@{itemViewModel.name}"
                 android:textAppearance="@style/Text.Title.White"
                 android:transitionName="item_title"
                 app:layout_constraintBottom_toTopOf="@+id/item_icon"
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:textAppearance="@style/Text.White.SemiTransparent"
-                app:itemPrice="@{item}"
+                android:text="@{itemViewModel.priceText}"
                 app:layout_constraintBottom_toBottomOf="@+id/item_icon"
                 app:layout_constraintLeft_toRightOf="@+id/item_icon"
                 app:layout_constraintTop_toTopOf="@+id/item_icon"
@@ -92,7 +92,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="16dp"
                 android:background="?selectableItemBackgroundBorderless"
-                android:onClick="@{(view) -> item.onDirectAddItemButtonClicked(view, item)}"
+                android:onClick="@{(view) -> itemViewModel.addPendingItemDirectly(view)}"
                 android:tint="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

@@ -15,6 +15,7 @@ public class AppModule {
 
     NeatApplication mApplication;
 
+
     public AppModule(NeatApplication application) {
         mApplication = application;
     }

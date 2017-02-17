@@ -1,0 +1,189 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.neat.viewmodel.RestaurantActivityViewModel" />
+
+    </data>
+
+    <FrameLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.CoordinatorLayout
+                android:id="@+id/coordinator_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                tools:context="com.neat.view.RestaurantSessionActivity">
+
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/app_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:elevation="2dp"
+                    android:fitsSystemWindows="true"
+                    android:theme="@style/Neat.AppBarOverlay">
+
+                    <android.support.design.widget.CollapsingToolbarLayout
+                        android:id="@+id/toolbar_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fitsSystemWindows="true"
+                        android:paddingBottom="100dp"
+                        app:collapsedTitleTextAppearance="@style/Text.Title.White.Mono"
+                        app:contentScrim="@color/background_dark"
+                        app:expandedTitleGravity="center"
+                        app:expandedTitleMarginBottom="140dp"
+                        app:expandedTitleTextAppearance="@style/Text.Display.Monospace.White"
+                        app:layout_scrollFlags="scroll|enterAlwaysCollapsed|enterAlways|snap"
+                        app:statusBarScrim="@color/background_super_dark"
+                        app:title="Lateral">
+
+                        <ImageView
+                            android:id="@+id/header"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:fitsSystemWindows="true"
+                            android:scaleType="centerCrop"
+                            app:layout_collapseMode="parallax" />
+
+                        <View
+                            android:id="@+id/header_scrim"
+                            android:layout_width="match_parent"
+                            android:layout_height="450dp"
+                            android:layout_gravity="bottom"
+                            android:background="@drawable/bg_image_shadow" />
+
+                        <android.support.v7.widget.Toolbar
+                            android:id="@+id/toolbar"
+                            android:layout_width="match_parent"
+                            android:layout_height="?attr/actionBarSize"
+                            android:elevation="@dimen/default_elevation"
+                            app:layout_collapseMode="pin" />
+
+                        <TextView
+                            android:id="@+id/subtitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="60dp"
+                            android:gravity="center"
+                            android:paddingEnd="16dp"
+                            android:paddingStart="16dp"
+                            android:textAppearance="@style/Text.Title.White"
+                            app:layout_collapseMode="parallax"
+                            tools:text="Vive la experiencia" />
+
+                        <Button
+                            android:id="@+id/pay_button"
+                            style="@style/Button.Accent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|end"
+                            android:layout_marginBottom="4dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/pay"
+                            android:translationY="-8dp"
+                            android:visibility="gone"
+                            app:layout_collapseMode="none" />
+
+                        <ImageView
+                            android:id="@+id/header_caret"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="bottom|center"
+                            android:layout_marginBottom="@dimen/default_padding"
+                            android:rotation="180"
+                            app:layout_collapseMode="none"
+                            app:srcCompat="@drawable/ic_caret_up_white" />
+
+                    </android.support.design.widget.CollapsingToolbarLayout>
+
+                </android.support.design.widget.AppBarLayout>
+
+                <android.support.v4.widget.NestedScrollView
+                    android:id="@+id/main_scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:behavior_overlapTop="100dp"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                    <LinearLayout
+                        android:id="@+id/main_sections_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="@dimen/orders_layout_sneak_peak">
+
+                        <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            xmlns:app="http://schemas.android.com/apk/res-auto"
+                            xmlns:tools="http://schemas.android.com/tools"
+                            android:id="@+id/table_details"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_weight="0"
+                            android:animateLayoutChanges="true"
+                            android:background="@color/white"
+                            android:elevation="1dp"
+                            android:orientation="vertical">
+
+                            <!--<TextView-->
+                            <!--android:id="@+id/table_title"-->
+                            <!--style="@style/Text.Header"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="Table 5"-->
+                            <!--android:layout_marginTop="16dp"-->
+                            <!--app:layout_constraintTop_toTopOf="parent"-->
+                            <!--android:layout_marginStart="16dp"-->
+                            <!--app:layout_constraintLeft_toLeftOf="parent" />-->
+
+                            <TextView
+                                android:id="@+id/table_participants"
+                                style="@style/Text.Header"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginTop="16dp"
+                                android:text="@{viewModel.tableParticipantsText}"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:layout_constraintBottom_creator="1"
+                                tools:layout_constraintLeft_creator="1"
+                                tools:text="Seating in table 5: Francesco, Lucia" />
+
+                        </android.support.constraint.ConstraintLayout>
+
+                    </LinearLayout>
+
+                </android.support.v4.widget.NestedScrollView>
+
+            </android.support.design.widget.CoordinatorLayout>
+
+
+        </FrameLayout>
+
+        <fragment
+            android:id="@+id/orders_fragment"
+            android:name="com.neat.view.fragments.OrdersFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_orders" />
+
+    </FrameLayout>
+</layout>

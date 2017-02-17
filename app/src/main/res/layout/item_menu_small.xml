@@ -7,7 +7,7 @@
     <data>
 
         <variable
-            name="item"
+            name="itemViewModel"
             type="com.neat.viewmodel.ItemViewModel" />
 
     </data>
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:gravity="center"
-        android:onClick="@{(view) -> item.onItemClick(view, item)}"
+        android:onClick="@{(view) -> itemViewModel.addPendingItemDirectly(view)}"
         android:orientation="horizontal"
         android:paddingBottom="@dimen/small_padding"
         android:paddingEnd="@dimen/large_padding"
@@ -33,7 +33,7 @@
             android:background="@drawable/bg_tag"
             android:padding="@dimen/default_padding"
             android:scaleType="fitCenter"
-            app:itemIcon="@{item}"
+            app:itemIcon="@{itemViewModel.icon}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/large_padding"
             android:maxLines="1"
-            android:text="@{item.name}"
+            android:text="@{itemViewModel.name}"
             android:textAppearance="@style/Text"
             android:transitionName="item_title"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/Text.Small"
-            app:itemPrice="@{item}"
+            android:text="@{itemViewModel.priceText}"
             app:layout_constraintBaseline_toBaselineOf="@+id/item_title"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toRightOf="@+id/item_title"

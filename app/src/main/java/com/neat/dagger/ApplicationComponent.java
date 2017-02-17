@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {AppModule.class, RestaurantModule.class})
+@Component(modules = {UserModule.class, AppModule.class, RestaurantModule.class})
 public interface ApplicationComponent {
 
     RestaurantProvider restaurantProvider();

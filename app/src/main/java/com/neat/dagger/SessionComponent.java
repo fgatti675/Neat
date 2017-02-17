@@ -1,6 +1,7 @@
 package com.neat.dagger;
 
-import com.neat.view.MenuActivity;
+import com.neat.view.ItemDetailsActivity;
+import com.neat.view.RestaurantSessionActivity;
 import com.neat.view.fragments.ItemFeaturedFragment;
 import com.neat.view.fragments.ItemListFragment;
 import com.neat.view.fragments.ItemListSmallFragment;
@@ -15,7 +16,7 @@ import dagger.Subcomponent;
 @Subcomponent(modules = {SessionModule.class})
 public interface SessionComponent {
 
-    void inject(MenuActivity menuActivity);
+    void inject(RestaurantSessionActivity restaurantSessionActivity);
 
     void inject(OrdersFragment fragment);
 
@@ -24,6 +25,10 @@ public interface SessionComponent {
     void inject(ItemFeaturedFragment fragment);
 
     void inject(ItemListFragment fragment);
+
+    void inject(ItemDetailsActivity itemDetailsActivity);
+
+//    void inject(PaymentActivity paymentActivity);
 
 //    OrdersFragmentComponent plus();
 

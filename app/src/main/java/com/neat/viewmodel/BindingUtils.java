@@ -3,15 +3,12 @@ package com.neat.viewmodel;
 import android.databinding.BindingAdapter;
 import android.support.annotation.DrawableRes;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.neat.R;
-import com.neat.model.classes.Item;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -106,26 +103,17 @@ public class BindingUtils {
     }};
 
     @BindingAdapter({"itemIcon"})
-    public static void bindIconImage(ImageView view, Item item) {
-        view.setImageResource(getIconDrawableRes(item));
+    public static void bindIconImage(ImageView view, String icon) {
+        view.setImageResource(getIconDrawableRes(icon));
     }
 
     @DrawableRes
-    public static Integer getIconDrawableRes(Item item) {
-        Integer res = iconMap.get(item.icon);
+    public static Integer getIconDrawableRes(String icon) {
+        Integer res = iconMap.get(icon);
         if (res == null) res = R.drawable.item_fork;
         return res;
     }
 
-    @BindingAdapter({"itemPrice"})
-    public static void bindItemPriceText(TextView view, Item item) {
-        String formattedPrice = null;
-        if (item.currency.equals("EUR"))
-            formattedPrice = String.format(Locale.getDefault(), "%.2f€", item.price);
-        else
-            formattedPrice = String.format(Locale.getDefault(), "%.2f %s", item.price, item.currency);
-        view.setText(formattedPrice);
-    }
 
     @BindingAdapter({"itemImage"})
     public static void bindImage(ImageView view, ItemViewModel itemViewModel) {

@@ -36,7 +36,7 @@ public class Admin {
 
         lateralRef.child("title").setValue("Lateral");
         lateralRef.child("subtitle").setValue("Vive la experiencia");
-        lateralRef.child("headerUrl").setValue("http://www.lateral.com/wp-content/uploads/2015/04/cabecera-carta.jpg");
+        lateralRef.child("header_url").setValue("http://www.lateral.com/wp-content/uploads/2015/04/cabecera-carta.jpg");
 //        lateralRef.child("headerUrl").setValue("http://www.lateral.com/wp-content/uploads/2015/05/LateralArturoSoria-portada.jpg");
 
         DatabaseReference menuRef = lateralRef.child("menu");
@@ -90,6 +90,12 @@ public class Admin {
         addItem("Albóndigas de merluza", null, 4.20D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Racio%CC%81n-de-albondigas-de-merluza-NUEVO.jpg", "meatballs", itemsRef, null, pinchosRef);
         addItem("Hamburguesa de buey", null, 4.00D, "EUR", "http://www.lateral.com/wp-content/uploads/2016/05/Hamburguesa-de-buey-e1464178621459.jpg", "hamburger", itemsRef, null, pinchosRef);
 
+        DatabaseReference tables = lateralRef.child("tables");
+        for (int i = 1; i < 8; i++) {
+            DatabaseReference tableRef = tables.push();
+            tableRef.child("name").setValue(String.valueOf(i));
+        }
+
         Thread.sleep(5000);
 
     }
@@ -105,7 +111,7 @@ public class Admin {
         for (DatabaseReference sectionRef : sectionRefs) {
             sectionRef.child("items").child(reference.getKey()).setValue(true);
         }
-        if (featuredRef != null) featuredRef.child("featuredItems").child(reference.getKey()).setValue(true);
+        if (featuredRef != null) featuredRef.child("featured_items").child(reference.getKey()).setValue(true);
         return reference;
     }
 

@@ -23,4 +23,6 @@
     <string name="orders_button_tooltip">Pulsa este boton para confirmar tu orden</string>
     <string name="order_num_items">Pedir %d elementos</string>
     <string name="add_a_note">Añade una note (sin picante, extra de salsa…)</string>
+    <string name="error_placing_orders">Error al hacer orden</string>
+    <string name="products_requested">%1$d ya han sido pedidos</string>
 </resources>

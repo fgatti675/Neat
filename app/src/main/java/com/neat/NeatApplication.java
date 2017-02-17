@@ -25,6 +25,7 @@ public class NeatApplication extends Application {
 
         applicationComponent = DaggerApplicationComponent.builder()
                 .appModule(new AppModule(this))
+
                 .build();
 
         FacebookSdk.sdkInitialize(getApplicationContext());

@@ -22,6 +22,6 @@
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models. Modify to fit the structure
 # of your app.
--keepclassmembers com.neat.model.** {
+-keepclassmembers com.neat.model.classes.** {
   *;
 }

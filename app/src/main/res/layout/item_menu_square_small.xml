@@ -8,7 +8,7 @@
     <data>
 
         <variable
-            name="item"
+            name="itemViewModel"
             type="com.neat.viewmodel.ItemViewModel" />
 
     </data>
@@ -19,7 +19,7 @@
         android:layout_width="@dimen/food_item_side_small"
         android:layout_height="@dimen/food_item_side_small"
         android:background="?attr/selectableItemBackground"
-        android:onClick="@{(view) -> item.onItemClick(view, item)}"
+        android:onClick="@{(view) -> itemViewModel.openItemDetails(view)}"
         android:orientation="vertical"
         android:transitionName="item_layout">
 
@@ -29,7 +29,7 @@
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             android:transitionName="item_image"
-            app:itemImage="@{item}"
+            app:itemImage="@{itemViewModel}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -42,7 +42,7 @@
             android:layout_height="@dimen/small_icon"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
-            app:itemIcon="@{item}"
+            app:itemIcon="@{itemViewModel.icon}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:srcCompat="@drawable/item_apple" />
@@ -54,7 +54,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:textAppearance="@style/Text.Small.White.SemiTransparent"
-            app:itemPrice="@{item}"
+            android:text="@{itemViewModel.priceText}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/item_icon"
             tools:text="2,40€" />
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:maxLines="5"
-            android:text="@{item.name}"
+            android:text="@{itemViewModel.name}"
             android:textAppearance="@style/Text.White"
             android:transitionName="item_title"
             app:layout_constraintBottom_toTopOf="@+id/item_price"
@@ -80,7 +80,7 @@
             android:layout_height="32dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:onClick="@{(view) -> item.onDirectAddItemButtonClicked(view, item)}"
+            android:onClick="@{(view) -> itemViewModel.addPendingItemDirectly(view)}"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"

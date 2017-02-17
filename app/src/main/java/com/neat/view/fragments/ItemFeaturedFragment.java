@@ -1,7 +1,6 @@
 package com.neat.view.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,24 +11,21 @@ import android.view.ViewGroup;
 
 import com.neat.NeatApplication;
 import com.neat.R;
-import com.neat.view.MenuActivity;
-import com.neat.model.SessionManager;
 import com.neat.databinding.ItemMenuSquareBinding;
 import com.neat.databinding.LayoutSectionHeaderBinding;
+import com.neat.model.SessionManager;
 import com.neat.model.classes.Item;
 import com.neat.model.classes.MenuSection;
-import com.neat.viewmodel.AddItemToOrdersHandler;
+import com.neat.viewmodel.ItemViewModel;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHandler {
+public class ItemFeaturedFragment extends Fragment {
 
     private static final String ARG_SECTION = "ARG_SECTION";
-
-    MenuActivity menuActivity;
 
     MenuSection section;
 
@@ -50,21 +46,6 @@ public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHan
         return fragment;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (!(context instanceof MenuActivity)) {
-            throw new RuntimeException("This fragment must be created in a MenuActivity");
-        }
-        menuActivity = (MenuActivity) context;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        NeatApplication.getComponent(getActivity()).application().getSessionComponent().inject(this);
-    }
-
     public ItemFeaturedFragment() {
         // Required empty public constructor
     }
@@ -78,6 +59,9 @@ public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHan
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        NeatApplication.getComponent(getActivity()).application().getSessionComponent().inject(this);
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_items_featured, container, false);
         ButterKnife.bind(this, view);
@@ -94,16 +78,6 @@ public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHan
         return view;
     }
 
-    @Override
-    public void onItemClick(View view, Item item) {
-        menuActivity.displayItemDetailsView(view, item);
-    }
-
-    @Override
-    public void onDirectAddItemButtonClicked(View view, Item item) {
-        sessionManager.addPendingItem(item, 1);
-    }
-
 
     private class Adapter extends RecyclerView.Adapter<ItemViewHolder> {
 
@@ -116,8 +90,8 @@ public class ItemFeaturedFragment extends Fragment implements AddItemToOrdersHan
         @Override
         public void onBindViewHolder(ItemViewHolder holder, int position) {
             ItemMenuSquareBinding binding = holder.getBinding();
-            binding.setItem(section.items.get(position));
-            binding.setHandlers(ItemFeaturedFragment.this);
+            Item item = section.items.get(position);
+            binding.setItemViewModel(new ItemViewModel(getActivity(), sessionManager, item));
         }
 
         @Override
