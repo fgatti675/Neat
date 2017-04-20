@@ -23,7 +23,7 @@
             android:name=".view.RestaurantSessionActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Neat.NoActionBar">
+            android:theme="@style/Neat.NoActionBar.Restaurant">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -49,17 +49,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".view.PaymentActivity" />
+        <activity
+            android:name=".view.CardEditActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:replace="android:theme" />
-        <activity android:name=".view.RestaurantSelectionActivity" />
         <activity
-            android:name=".PaymentActivity"
-            android:label="@string/payment"
-            android:theme="@style/Neat"></activity>
+            android:name=".view.RestaurantSelectionActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

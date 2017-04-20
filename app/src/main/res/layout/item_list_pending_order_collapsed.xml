@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="?attr/selectableItemBackgroundBorderless"
+        tools:background="@color/colorPrimary"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="@dimen/tiny_padding"

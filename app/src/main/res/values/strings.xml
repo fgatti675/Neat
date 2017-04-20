@@ -9,7 +9,7 @@
     <string name="pending_products_title">Ready to order</string>
     <string name="pending_products_empty">Nothing on the queue!</string>
     <string name="pending_products_subtitle">Select the products you would like to order and they will show up here</string>
-    <string name="bill_so_far">Your bill so far</string>
+    <string name="requested_items">Already ordered</string>
     <string name="requested_products_empty">No products have been ordered yet</string>
     <string name="requested_products_info">The products you order will show up here</string>
     <string name="order">Order</string>
@@ -24,6 +24,7 @@
     <string name="orders_button_tooltip">Tap the orders button to place your order when you are ready!</string>
     <string name="add_a_note">Add a note (not spicy, extra sauce, etc.)</string>
     <string name="error_placing_orders">Error placing orders</string>
-    <string name="payment">Payment</string>
+    <string name="add_new_card">Add new card</string>
+    <string name="payment_method">Payment method</string>
 
 </resources>

@@ -17,14 +17,13 @@ public class Admin {
     public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setServiceAccount(new FileInputStream("/Users/f.gatti.gomez/neat-eb7c6-firebase-adminsdk-edcz4-8078dde852.json"))
+                .setServiceAccount(new FileInputStream("/Users/f.gatti.gomez/ .json"))
                 .setDatabaseUrl("https://neat-eb7c6.firebaseio.com")
                 .build();
 
         FirebaseApp.initializeApp(options);
 
         saveLateral();
-
     }
 
     public static void saveLateral() throws InterruptedException {

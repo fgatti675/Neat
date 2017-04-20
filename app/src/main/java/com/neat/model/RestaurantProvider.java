@@ -19,6 +19,21 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.neat.model.FireBasePaths.CURRENCY;
+import static com.neat.model.FireBasePaths.CURRENT_SESSION;
+import static com.neat.model.FireBasePaths.FEATURED_ITEMS;
+import static com.neat.model.FireBasePaths.HEADER_URL;
+import static com.neat.model.FireBasePaths.HEADLINE;
+import static com.neat.model.FireBasePaths.ITEMS;
+import static com.neat.model.FireBasePaths.MENU;
+import static com.neat.model.FireBasePaths.NAME;
+import static com.neat.model.FireBasePaths.RESTAURANTS;
+import static com.neat.model.FireBasePaths.SECTIONS;
+import static com.neat.model.FireBasePaths.SUBTITLE;
+import static com.neat.model.FireBasePaths.TABLES;
+import static com.neat.model.FireBasePaths.TITLE;
+import static com.neat.model.FireBasePaths.TYPE;
+
 
 /**
  * Created by f.gatti.gomez on 10/10/16.
@@ -26,20 +41,6 @@ import javax.inject.Singleton;
 @Singleton
 public class RestaurantProvider {
 
-    public static final String HEADER_URL = "header_url";
-    public static final String RESTAURANTS = "restaurants";
-    public static final String TITLE = "title";
-    public static final String SUBTITLE = "subtitle";
-    public static final String MENU = "menu";
-    public static final String CURRENCY = "currency";
-    public static final String ITEMS = "items";
-    public static final String SECTIONS = "sections";
-    public static final String TABLES = "tables";
-    public static final String HEADLINE = "headline";
-    public static final String TYPE = "type";
-    public static final String FEATURED_ITEMS = "featured_items";
-    public static final String NAME = "name";
-    public static final String CURRENT_SESSION = "current_session";
 
     @Inject
     public RestaurantProvider() {

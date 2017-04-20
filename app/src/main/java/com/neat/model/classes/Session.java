@@ -24,8 +24,9 @@ public class Session implements Serializable {
     public Set<Order> pendingOrders = new LinkedHashSet<>();
     public Set<Order> requestedOrders = new LinkedHashSet<>();
 
+    public SessionPayment payment;
+
     public boolean active;
-    public boolean paid;
 
     public boolean hasPendingOrders() {
         return !pendingOrders.isEmpty();

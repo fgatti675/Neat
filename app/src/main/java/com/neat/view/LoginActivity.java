@@ -39,12 +39,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -228,39 +231,59 @@ public class LoginActivity extends AppCompatActivity implements
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                             hideProgressDialog();
                         } else {
 
-                            DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-                            DatabaseReference users = database.child("users");
                             final FirebaseUser firebaseUser = task.getResult().getUser();
-                            DatabaseReference userRef = users.child(firebaseUser.getUid());
-                            if (userRef == null) {
-                                userRef = users.push();
-                            }
-                            userRef.runTransaction(new Transaction.Handler() {
-                                @Override
-                                public Transaction.Result doTransaction(MutableData mutableData) {
-                                    mutableData.child("name").setValue(firebaseUser.getDisplayName());
-                                    mutableData.child("email").setValue(firebaseUser.getEmail());
-                                    Uri photoUrl = firebaseUser.getPhotoUrl();
-                                    if (photoUrl != null)
-                                        mutableData.child("photo_url").setValue(photoUrl.toString());
-                                    return Transaction.success(mutableData);
-                                }
 
-                                @Override
-                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                                    if (databaseError != null) {
-                                        mAuth.signOut();
-                                        hideProgressDialog();
-                                        return;
-                                    }
-                                    startActivity(new Intent(LoginActivity.this, RestaurantSessionActivity.class));
-                                }
-                            });
+                            firebaseUser.getToken(true)
+                                    .addOnSuccessListener(new OnSuccessListener<GetTokenResult>() {
+                                        @Override
+                                        public void onSuccess(GetTokenResult getTokenResult) {
+                                            final String idToken = getTokenResult.getToken();
+
+                                            // Send token to your backend via HTTPS
+                                            DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+                                            DatabaseReference users = database.child("users");
+                                            DatabaseReference userRef = users.child(firebaseUser.getUid());
+                                            if (userRef == null) {
+                                                userRef = users.push();
+                                            }
+                                            userRef.runTransaction(new Transaction.Handler() {
+                                                @Override
+                                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                                    mutableData.child("name").setValue(firebaseUser.getDisplayName());
+                                                    mutableData.child("email").setValue(firebaseUser.getEmail());
+                                                    mutableData.child("token").setValue(idToken);
+                                                    Uri photoUrl = firebaseUser.getPhotoUrl();
+                                                    if (photoUrl != null)
+                                                        mutableData.child("photo_url").setValue(photoUrl.toString());
+                                                    return Transaction.success(mutableData);
+                                                }
+
+                                                @Override
+                                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                                    if (databaseError != null) {
+                                                        mAuth.signOut();
+                                                        Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                                        hideProgressDialog();
+                                                        return;
+                                                    }
+                                                    startActivity(new Intent(LoginActivity.this, RestaurantSessionActivity.class));
+                                                }
+                                            });
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            mAuth.signOut();
+                                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                            hideProgressDialog();
+                                        }
+                                    });
+
 
                         }
 

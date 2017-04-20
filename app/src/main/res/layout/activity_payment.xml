@@ -1,53 +1,223 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.neat.PaymentActivity">
+    tools:context="com.neat.view.PaymentActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/Neat.AppBarOverlay">
+    <data>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:title="@string/payment"
-            app:popupTheme="@style/Neat.PopupOverlay" />
+        <variable
+            name="viewmodel"
+            type="com.neat.viewmodel.PaymentViewModel" />
 
-    </android.support.design.widget.AppBarLayout>
+        <import type="android.view.View" />
 
-    <android.support.constraint.ConstraintLayout
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/wallet_fragment_wrap"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-            <fragment
-                android:id="@+id/wallet_fragment"
-                android:name="com.google.android.gms.wallet.fragment.SupportWalletFragment"
+            <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:environment="test"
-                app:fragmentMode="buyButton" />
-        </FrameLayout>
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
-    </android.support.constraint.ConstraintLayout>
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/white"
+                    android:elevation="1dp"
+                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed|enterAlways" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+            </android.support.design.widget.AppBarLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/nested_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/large_padding"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/requested_orders_title">
+
+
+                        <android.support.constraint.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="@dimen/large_padding"
+                            android:background="@color/white"
+                            android:elevation="1dp"
+                            android:padding="@dimen/large_padding">
+
+                            <TextView
+                                android:id="@+id/restaurant_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="16dp"
+                                android:layout_marginLeft="16dp"
+                                android:layout_marginRight="16dp"
+                                android:layout_marginStart="16dp"
+                                android:gravity="center"
+                                android:text="@{viewmodel.restaurantTitle}"
+                                android:textAppearance="@style/Text.Display.Monospace"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Lateral" />
+
+                            <TextView
+                                android:id="@+id/title_underline"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:lines="1"
+                                android:text="----------------------------------------"
+                                android:textAppearance="@style/Text.Header.Mono"
+                                app:layout_constraintLeft_toLeftOf="@+id/restaurant_title"
+                                app:layout_constraintRight_toRightOf="@+id/restaurant_title"
+                                app:layout_constraintTop_toBottomOf="@+id/restaurant_title" />
+
+                            <LinearLayout
+                                android:id="@+id/requested_items_layout"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingTop="@dimen/large_padding"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/title_underline"
+                                tools:background="@color/colorPrimary" />
+
+
+                            <TextView
+                                android:id="@+id/total_amount_separator"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/small_padding"
+                                android:gravity="end"
+                                android:lines="1"
+                                android:text="----------------------"
+                                android:textAppearance="@style/Text.Header.Mono"
+                                app:layout_constraintLeft_toLeftOf="@+id/total_amount_view"
+                                app:layout_constraintRight_toRightOf="@+id/total_amount_view"
+                                app:layout_constraintTop_toBottomOf="@+id/requested_items_layout" />
+
+                            <TextView
+                                android:id="@+id/total_amount_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/large_padding"
+                                android:layout_marginStart="@dimen/large_padding"
+                                android:gravity="end"
+                                android:text="@{viewmodel.totalPrice}"
+                                android:textAppearance="@style/Text.Header.Mono"
+                                app:layout_constraintHorizontal_bias="1.0"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/total_amount_separator"
+                                tools:text="5 euro" />
+
+                        </android.support.constraint.ConstraintLayout>
+
+                        <android.support.constraint.ConstraintLayout
+                            android:id="@+id/credit_cards_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/large_padding"
+                            android:layout_marginTop="@dimen/default_padding"
+                            android:background="@color/white"
+                            android:elevation="1dp"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingBottom="@dimen/large_padding"
+                            android:paddingTop="@dimen/large_padding">
+
+
+                            <TextView
+                                android:id="@+id/method_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:layout_marginRight="16dp"
+                                android:text="@string/payment_method"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <ProgressBar
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="@{viewmodel.cardSpinnerVisibility}"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/method_title" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:background="?android:selectableItemBackground"
+                                android:drawablePadding="@dimen/large_padding"
+                                android:drawableStart="@drawable/ic_credit_card"
+                                android:onClick="@{(view) -> viewmodel.onNewCardClicked(view)}"
+                                android:padding="@dimen/large_padding"
+                                android:text='@{"· · · · · · · · " + viewmodel.selectedCreditCard.get().numberLastDigits}'
+                                android:textAppearance="@style/Text.Header"
+                                android:visibility="@{viewmodel.selectedCardVisibility}"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/method_title"
+                                tools:text="· · · · · · · · 7349" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:background="?android:selectableItemBackground"
+                                android:drawablePadding="@dimen/large_padding"
+                                android:drawableStart="@drawable/ic_add_accent"
+                                android:onClick="@{(view) -> viewmodel.onNewCardClicked(view)}"
+                                android:padding="@dimen/large_padding"
+                                android:text="@string/add_new_card"
+                                android:textAppearance="@style/Text.Header"
+                                android:visibility="@{viewmodel.addCardVisibility}"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/method_title"
+                                tools:visibility="gone" />
+
+                        </android.support.constraint.ConstraintLayout>
+
+                    </LinearLayout>
+                </ScrollView>
+            </android.support.v4.widget.NestedScrollView>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+        <Button
+            android:id="@+id/pay_button"
+            style="@style/Button.Accent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:enabled='@{viewmodel.selectedCreditCard.get() != null}'
+            android:onClick="@{(view) -> viewmodel.onPayClicked(view)}"
+            android:padding="24dp"
+            android:text="@string/pay"
+            app:layout_insetEdge="bottom" />
+    </LinearLayout>
+</layout>

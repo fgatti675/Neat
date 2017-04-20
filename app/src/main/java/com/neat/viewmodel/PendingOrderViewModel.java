@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.Stack;
 
 /**
- * Map an list of orders of the same item to a single OrderViewModel
+ * Map a list of orders of the same item to a single {@link PendingOrderViewModel}
  */
 public class PendingOrderViewModel extends BaseObservable implements Serializable {
 

@@ -13,6 +13,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.neat.dagger.SessionScope;
+import com.neat.model.classes.CreditCard;
 import com.neat.model.classes.Item;
 import com.neat.model.classes.Order;
 import com.neat.model.classes.Restaurant;
@@ -28,6 +29,26 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import static com.neat.model.FireBasePaths.ACTIVE;
+import static com.neat.model.FireBasePaths.CARD_ID;
+import static com.neat.model.FireBasePaths.CREATION_DATE;
+import static com.neat.model.FireBasePaths.CREATOR_ID;
+import static com.neat.model.FireBasePaths.CURRENCY;
+import static com.neat.model.FireBasePaths.CURRENT_SESSION;
+import static com.neat.model.FireBasePaths.ITEM_ID;
+import static com.neat.model.FireBasePaths.PAID;
+import static com.neat.model.FireBasePaths.PAID_BY;
+import static com.neat.model.FireBasePaths.PAYMENT;
+import static com.neat.model.FireBasePaths.PENDING_ORDERS;
+import static com.neat.model.FireBasePaths.REQUESTED_ORDERS;
+import static com.neat.model.FireBasePaths.REQUESTER_ID;
+import static com.neat.model.FireBasePaths.RESTAURANTS;
+import static com.neat.model.FireBasePaths.SESSIONS;
+import static com.neat.model.FireBasePaths.SPECIAL_INSTRUCTIONS;
+import static com.neat.model.FireBasePaths.TABLES;
+import static com.neat.model.FireBasePaths.TABLE_ID;
+import static com.neat.model.FireBasePaths.USERS;
+
 /**
  * Created by f.gatti.gomez on 10/10/16.
  */
@@ -36,36 +57,9 @@ public class SessionManager {
 
     public static final String TAG = SessionManager.class.getSimpleName();
 
-    public static final String PENDING_ORDERS = "pending_orders";
-    public static final String REQUESTED_ORDERS = "requested_orders";
-
-    public static final String HEADER_URL = "header_url";
-    public static final String RESTAURANTS = "restaurants";
-    public static final String TITLE = "title";
-    public static final String SUBTITLE = "subtitle";
-    public static final String MENU = "menu";
-    public static final String CURRENCY = "currency";
-    public static final String ITEMS = "items";
-    public static final String SECTIONS = "sections";
-    public static final String TABLES = "tables";
-    public static final String HEADLINE = "headline";
-    public static final String TYPE = "type";
-    public static final String FEATURED_ITEMS = "featured_items";
-    public static final String NAME = "name";
-    public static final String CURRENT_SESSION = "current_session";
-    public static final String SESSIONS = "sessions";
-    public static final String USERS = "users";
-    public static final String TABLE_ID = "table_id";
-    public static final String CREATION_DATE = "creation_date";
-    public static final String PAID = "paid";
-    public static final String ACTIVE = "active";
-    public static final String ITEM_ID = "item_id";
-    public static final String SPECIAL_INSTRUCTIONS = "special_instructions";
-    public static final String CREATOR_ID = "creator_id";
-    public static final String REQUESTER_ID = "requester_id";
-
     private User user;
     private DatabaseReference restaurantRef;
+    private UserManager userManager;
 
     public interface OnPendingOrdersChangedListener {
 
@@ -89,6 +83,13 @@ public class SessionManager {
         void onSessionJoinFail();
     }
 
+    public interface OnPaymentCallbacks {
+
+        void onSessionPayed(Session session);
+
+        void onSessionPaymentFail();
+    }
+
     private DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
     private Session session;
@@ -99,14 +100,16 @@ public class SessionManager {
     private List<OnOrdersPlacedListener> onOrdersPlacedListeners = new LinkedList<>();
     private List<OnPendingOrdersChangedListener> onPendingOrdersChangedListeners = new LinkedList<>();
     private List<OnSessionJoinedCallbacks> sessionJoinedCallbacks = new LinkedList<>();
+    private List<OnPaymentCallbacks> sessionPaidCallbacks = new LinkedList<>();
 
     @Inject
-    public SessionManager(@Named("logged_user") User user) {
+    public SessionManager(@Named("logged_user") User user, UserManager userManager) {
 
         if (user == null)
             throw new NullPointerException("A logged user must be provided to use this component");
 
         this.user = user;
+        this.userManager = userManager;
     }
 
     public Session getSession() {
@@ -186,7 +189,7 @@ public class SessionManager {
                 sessionData.child(TABLE_ID).setValue(tableId);
                 sessionData.child(USERS).child(user.uid).setValue(user);
                 sessionData.child(CREATION_DATE).setValue(ServerValue.TIMESTAMP);
-                sessionData.child(PAID).setValue(false);
+                sessionData.child(PAYMENT).child(PAID).setValue(false);
                 sessionData.child(ACTIVE).setValue(true);
                 return Transaction.success(sessionData);
             }
@@ -205,6 +208,178 @@ public class SessionManager {
             }
         });
     }
+
+
+    public void addPendingOrder(final Item item, final String instructions) { // TODO: add item config
+
+        if (session == null)
+            throw new IllegalStateException("Session has not been joined");
+
+        sessionRef.child(PENDING_ORDERS).push().runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                mutableData.child(ITEM_ID).setValue(item.id);
+                mutableData.child(CREATOR_ID).setValue(user.uid);
+                mutableData.child(SPECIAL_INSTRUCTIONS).setValue(instructions);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+            }
+        });
+    }
+
+    public void removePendingOrder(Order order) {
+
+        if (session == null)
+            throw new IllegalStateException("Session has not been joined");
+
+        sessionRef.child(PENDING_ORDERS).child(order.id).removeValue();
+    }
+
+    public void placePendingOrders() {
+
+        sessionRef.runTransaction(new Transaction.Handler() {
+
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+
+                // TODO: not working in case of db error
+                // this prevents the removed listener to trigger
+                session.pendingOrders.clear();
+
+                for (MutableData pendingOrderMutableData : mutableData.child(PENDING_ORDERS).getChildren()) {
+                    String key = pendingOrderMutableData.getKey();
+                    MutableData requestedOrderMutableData = mutableData.child(REQUESTED_ORDERS).child(key);
+                    requestedOrderMutableData.child(ITEM_ID).setValue(pendingOrderMutableData.child(ITEM_ID).getValue());
+                    requestedOrderMutableData.child(SPECIAL_INSTRUCTIONS).setValue(pendingOrderMutableData.child(SPECIAL_INSTRUCTIONS).getValue());
+                    requestedOrderMutableData.child(REQUESTER_ID).setValue(pendingOrderMutableData.child(REQUESTER_ID).getValue());
+                }
+
+                mutableData.child(PENDING_ORDERS).setValue(null);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+            }
+        });
+    }
+
+    public void pay(final CreditCard creditCard) {
+
+        userManager.getUserToken(new UserManager.TokenFetchCallback() {
+            @Override
+            public void onTokenFetchedResult(String token) {
+
+            }
+
+            @Override
+            public void onTokenFetchError(Exception e) {
+
+            }
+        });
+
+        sessionRef.runTransaction(new Transaction.Handler() {
+
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+
+                mutableData.child(ACTIVE).setValue(false);
+                mutableData.child(PAYMENT).child(PAID).setValue(true);
+                mutableData.child(PAYMENT).child(PAID_BY).setValue(user.uid);
+                mutableData.child(PAYMENT).child(CARD_ID).setValue(creditCard.id);
+                restaurantRef.child(TABLES).child(session.table.id).child(CURRENT_SESSION).removeValue();
+
+                // this prevents the removed listener to trigger
+                session.pendingOrders.clear();
+
+                for (MutableData pendingOrderMutableData : mutableData.child(PENDING_ORDERS).getChildren()) {
+                    String key = pendingOrderMutableData.getKey();
+                    MutableData requestedOrderMutableData = mutableData.child(REQUESTED_ORDERS).child(key);
+                    requestedOrderMutableData.child(ITEM_ID).setValue(pendingOrderMutableData.child(ITEM_ID).getValue());
+                    requestedOrderMutableData.child(SPECIAL_INSTRUCTIONS).setValue(pendingOrderMutableData.child(SPECIAL_INSTRUCTIONS).getValue());
+                    requestedOrderMutableData.child(REQUESTER_ID).setValue(pendingOrderMutableData.child(REQUESTER_ID).getValue());
+                }
+
+                mutableData.child(PENDING_ORDERS).setValue(null);
+
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                for (OnPaymentCallbacks callbacks : sessionPaidCallbacks)
+                    callbacks.onSessionPayed(convertSessionFrom(restaurant, dataSnapshot));
+            }
+        });
+    }
+
+    public void addOnOrdersPlacedListener(OnOrdersPlacedListener e) {
+        onOrdersPlacedListeners.add(e);
+    }
+
+    public void removeOnOrdersPlacedListener(OnOrdersPlacedListener e) {
+        onOrdersPlacedListeners.remove(e);
+    }
+
+    public void addOnPendingOrdersChangedListener(OnPendingOrdersChangedListener e) {
+        onPendingOrdersChangedListeners.add(e);
+    }
+
+    public void removeOnPendingOrdersChangedListener(OnPendingOrdersChangedListener e) {
+        onPendingOrdersChangedListeners.remove(e);
+    }
+
+    public void addOnSessionJoinedCallbacks(OnSessionJoinedCallbacks onSessionJoinedCallbacks) {
+        sessionJoinedCallbacks.add(onSessionJoinedCallbacks);
+    }
+
+    public void removeOnSessionJoinedCallbacks(OnSessionJoinedCallbacks onSessionJoinedCallbacks) {
+        sessionJoinedCallbacks.remove(onSessionJoinedCallbacks);
+    }
+
+    public void addOnSessionPaidCallbacks(OnPaymentCallbacks onPaymentCallbacks) {
+        sessionPaidCallbacks.add(onPaymentCallbacks);
+    }
+
+    public void removeOnSessionPaidCallbacks(OnPaymentCallbacks onPaymentCallbacks) {
+        sessionPaidCallbacks.remove(onPaymentCallbacks);
+    }
+
+    private static Session convertSessionFrom(final Restaurant restaurant, DataSnapshot sessionSnapshot) {
+        Session session = new Session();
+        session.id = sessionSnapshot.getKey();
+        session.restaurant = restaurant;
+        session.currency = (String) sessionSnapshot.child(CURRENCY).getValue();
+        session.table = restaurant.tables.get(sessionSnapshot.child(TABLE_ID).getValue());
+        session.creationDate = new Date((long) sessionSnapshot.child(CREATION_DATE).getValue());
+        for (DataSnapshot userRef : sessionSnapshot.child(USERS).getChildren()) {
+            User user = userRef.getValue(User.class);
+            user.uid = userRef.getKey();
+            session.users.put(userRef.getKey(), user);
+        }
+        for (DataSnapshot orderRef : sessionSnapshot.child(PENDING_ORDERS).getChildren()) {
+            session.pendingOrders.add(convertOrderFrom(restaurant, session, orderRef));
+        }
+        for (DataSnapshot orderRef : sessionSnapshot.child(REQUESTED_ORDERS).getChildren()) {
+            session.requestedOrders.add(convertOrderFrom(restaurant, session, orderRef));
+        }
+        return session;
+    }
+
+    private static Order convertOrderFrom(Restaurant restaurant, Session session, DataSnapshot dataSnapshot) {
+        Order order = new Order();
+        order.id = dataSnapshot.getKey();
+        order.item = restaurant.menu.items.get(dataSnapshot.child(ITEM_ID).getValue());
+        order.specialInstructions = (String) dataSnapshot.child(SPECIAL_INSTRUCTIONS).getValue();
+        order.creator = session.users.get(dataSnapshot.child(CREATOR_ID).getValue());
+        return order;
+    }
+
 
     private void setUpListeners() {
         /*
@@ -338,118 +513,6 @@ public class SessionManager {
 //                    listener.onOrdersPlacedError();
 //            }
 //        });
-    }
-
-
-    public void addPendingOrder(final Item item, final String instructions) { // TODO: add item config
-
-        if (session == null)
-            throw new IllegalStateException("Session has not been joined");
-
-        sessionRef.child(PENDING_ORDERS).push().runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                mutableData.child(ITEM_ID).setValue(item.id);
-                mutableData.child(CREATOR_ID).setValue(user.uid);
-                mutableData.child(SPECIAL_INSTRUCTIONS).setValue(instructions);
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-            }
-        });
-    }
-
-    public void removePendingOrder(Order order) {
-
-        if (session == null)
-            throw new IllegalStateException("Session has not been joined");
-
-        sessionRef.child(PENDING_ORDERS).child(order.id).removeValue();
-    }
-
-    public void placePendingOrders() {
-
-        sessionRef.runTransaction(new Transaction.Handler() {
-
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-
-                // this prevents the removed listener to trigger
-                session.pendingOrders.clear();
-
-                for (MutableData pendingOrderMutableData : mutableData.child(PENDING_ORDERS).getChildren()) {
-                    String key = pendingOrderMutableData.getKey();
-                    MutableData requestedOrderMutableData = mutableData.child(REQUESTED_ORDERS).child(key);
-                    requestedOrderMutableData.child(ITEM_ID).setValue(pendingOrderMutableData.child(ITEM_ID).getValue());
-                    requestedOrderMutableData.child(SPECIAL_INSTRUCTIONS).setValue(pendingOrderMutableData.child(SPECIAL_INSTRUCTIONS).getValue());
-                    requestedOrderMutableData.child(REQUESTER_ID).setValue(pendingOrderMutableData.child(REQUESTER_ID).getValue());
-                }
-
-                mutableData.child(PENDING_ORDERS).setValue(null);
-
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-            }
-        });
-    }
-
-    public void addOnOrdersPlacedListener(OnOrdersPlacedListener e) {
-        onOrdersPlacedListeners.add(e);
-    }
-
-    public void removeOnOrdersPlacedListener(OnOrdersPlacedListener e) {
-        onOrdersPlacedListeners.remove(e);
-    }
-
-    public void addOnPendingOrdersChangedListener(OnPendingOrdersChangedListener e) {
-        onPendingOrdersChangedListeners.add(e);
-    }
-
-    public void removeOnPendingOrdersChangedListener(OnPendingOrdersChangedListener e) {
-        onPendingOrdersChangedListeners.remove(e);
-    }
-
-    public void addOnSessionJoinedCallbacks(OnSessionJoinedCallbacks onSessionJoinedCallbacks) {
-        sessionJoinedCallbacks.add(onSessionJoinedCallbacks);
-    }
-
-    public void removeOnSessionJoinedCallbacks(OnSessionJoinedCallbacks onSessionJoinedCallbacks) {
-        sessionJoinedCallbacks.remove(onSessionJoinedCallbacks);
-    }
-
-    private static Session convertSessionFrom(final Restaurant restaurant, DataSnapshot sessionSnapshot) {
-        Session session = new Session();
-        session.id = sessionSnapshot.getKey();
-        session.restaurant = restaurant;
-        session.currency = (String) sessionSnapshot.child(CURRENCY).getValue();
-        session.table = restaurant.tables.get(sessionSnapshot.child(TABLE_ID).getValue());
-        session.creationDate = new Date((long) sessionSnapshot.child(CREATION_DATE).getValue());
-        for (DataSnapshot userRef : sessionSnapshot.child(USERS).getChildren()) {
-            User user = userRef.getValue(User.class);
-            user.uid = userRef.getKey();
-            session.users.put(userRef.getKey(), user);
-        }
-        for (DataSnapshot orderRef : sessionSnapshot.child(PENDING_ORDERS).getChildren()) {
-            session.pendingOrders.add(convertOrderFrom(restaurant, session, orderRef));
-        }
-        for (DataSnapshot orderRef : sessionSnapshot.child(REQUESTED_ORDERS).getChildren()) {
-            session.requestedOrders.add(convertOrderFrom(restaurant, session, orderRef));
-        }
-        return session;
-    }
-
-    private static Order convertOrderFrom(Restaurant restaurant, Session session, DataSnapshot dataSnapshot) {
-        Order order = new Order();
-        order.id = dataSnapshot.getKey();
-        order.item = restaurant.menu.items.get(dataSnapshot.child(ITEM_ID).getValue());
-        order.specialInstructions = (String) dataSnapshot.child(SPECIAL_INSTRUCTIONS).getValue();
-        order.creator = session.users.get(dataSnapshot.child(CREATOR_ID).getValue());
-        return order;
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)

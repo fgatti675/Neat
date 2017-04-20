@@ -1,5 +1,6 @@
 package com.neat.dagger;
 
+import com.neat.view.PaymentActivity;
 import com.neat.view.ItemDetailsActivity;
 import com.neat.view.RestaurantSessionActivity;
 import com.neat.view.fragments.ItemFeaturedFragment;
@@ -28,9 +29,7 @@ public interface SessionComponent {
 
     void inject(ItemDetailsActivity itemDetailsActivity);
 
-//    void inject(PaymentActivity paymentActivity);
-
-//    OrdersFragmentComponent plus();
+    void inject(PaymentActivity paymentActivity);
 
 
 }

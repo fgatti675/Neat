@@ -27,7 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.neat.NeatApplication;
-import com.neat.PaymentActivity;
+import com.neat.view.PaymentActivity;
 import com.neat.R;
 import com.neat.dagger.SessionScope;
 import com.neat.databinding.ItemListPendingOrderCollapsedBinding;
@@ -37,13 +37,13 @@ import com.neat.model.SessionManager;
 import com.neat.model.classes.Item;
 import com.neat.model.classes.Order;
 import com.neat.model.classes.Session;
+import com.neat.view.util.PriceUtil;
 import com.neat.viewmodel.PendingOrderViewModel;
 import com.neat.viewmodel.RequestedOrderViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -102,7 +102,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
     FloatingActionButton payButton;
 
     // this is a reference to the view that gets displayed when the orders view is collapsed, and can be one the 2 below
-    ViewGroup collapsedViewRef;
+    ViewGroup currentCollapsedViewRef;
 
     TextView pendingOrdersCollapsedTitle;
     TextView pendingOrdersCollapsedSubtitle;
@@ -113,7 +113,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
     ViewGroup collapsedOrdersEmptyLayout;
 
     // this is a reference to the view that gets displayed when the orders view is expanded, and can be one the 3 below
-    ViewGroup pendingExpandedViewRef;
+    ViewGroup currentPendingExpandedViewRef;
 
     // the 3 views that can be displayed when the layout is expanded
     ViewGroup pendingExpandedWithItemsView;
@@ -143,17 +143,10 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
     Map<Item, PendingOrderViewModel> itemPendingOrderViewModelMap = new HashMap<>();
     Map<Item, RequestedOrderViewModel> itemRequestedOrderViewModelMap = new HashMap<>();
     private CountDownTimer clearJustOrderedStateTimer;
+    private boolean tooltipDisplayed;
 
     public OrdersFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        sessionManager.removeOnSessionJoinedCallbacks(this);
-        sessionManager.removeOnOrdersPlacedListener(this);
-        sessionManager.removeOnPendingOrdersChangedListener(this);
     }
 
     @Override
@@ -168,7 +161,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_orders, container, false);
         ButterKnife.bind(this, view);
 
-        collapsedViewRef = collapsedOrdersLayout;
+        currentCollapsedViewRef = collapsedOrdersLayout;
 
         bottomSheetHeight = getResources().getDimension(R.dimen.orders_layout_sneak_peak);
 
@@ -184,7 +177,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
         pendingExpandedJustOrderedView = (ViewGroup) inflater.inflate(R.layout.layout_pending_orders_expanded_ordered, pendingOrdersWrapper, false);
 
         // initially set the expanded view reference as empty
-        pendingExpandedViewRef = pendingExpandedEmptyView;
+        currentPendingExpandedViewRef = pendingExpandedEmptyView;
 
         requestedOrdersView = (ViewGroup) inflater.inflate(R.layout.layout_requested_orders, requestedOrdersWrapper, false);
         requestedItemsLayout = (ViewGroup) requestedOrdersView.findViewById(R.id.requested_items_layout);
@@ -253,7 +246,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
                 if (prevOffset > slideOffset && prevState == STATE_EXPANDED && slideOffset < .4) {
                     doCollapseTransition();
                     prevState = STATE_COLLAPSED;
-                } else if (prevOffset < slideOffset && prevState == STATE_COLLAPSED && slideOffset > .2) {
+                } else if (prevOffset < slideOffset && prevState == STATE_COLLAPSED && slideOffset > .3) {
                     doExpandTransition();
                     prevState = STATE_EXPANDED;
                 }
@@ -303,6 +296,14 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
         };
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sessionManager.removeOnSessionJoinedCallbacks(this);
+        sessionManager.removeOnOrdersPlacedListener(this);
+        sessionManager.removeOnPendingOrdersChangedListener(this);
     }
 
 
@@ -361,10 +362,10 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
                     public void run() {
                         displayOrdersButtonTooltip();
                     }
-                }, 48);
+                }, 400);
             }
 
-        }, 128);
+        }, 48);
 
     }
 
@@ -442,13 +443,13 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
 
 
     private void setStateWithPendingOrders() {
-        collapsedViewRef = collapsedOrdersLayout;
+        currentCollapsedViewRef = collapsedOrdersLayout;
 
         pendingOrdersWrapper.removeAllViews();
         pendingOrdersWrapper.addView(collapsedOrdersLayout);
         bottomLayout.findViewById(R.id.caret).setRotation(180);
 
-        pendingExpandedViewRef = pendingExpandedWithItemsView;
+        currentPendingExpandedViewRef = pendingExpandedWithItemsView;
 
         pendingItemsLayoutCollapsed.setVisibility(View.VISIBLE);
         pendingOrdersCollapsedTitle.setText(R.string.pending_products_title);
@@ -476,19 +477,22 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
                 }, 2000);
 
             }
-        }, 16);
+        }, 128);
     }
 
     private void updateOrderButtonText() {
+        if(!isAdded()) return;
         String ordersButtonString = getString(R.string.order_num_items, sessionManager.getSession().getPendingItemsCount());
         orderButton.setText(ordersButtonString);
         orderButtonExpanded.setText(ordersButtonString);
     }
 
     public void displayOrdersButtonTooltip() {
+        if(tooltipDisplayed) return;
+        tooltipDisplayed = true;
         Tooltip.make(getActivity(),
                 new Tooltip.Builder(ORDERS_BUTTON_TOOLTIP_ID)
-                        .fadeDuration(200)
+                        .fadeDuration(400)
                         .withStyleId(R.style.Tooltip)
                         .maxWidth(getResources().getDimensionPixelSize(R.dimen.tooltip_width))
                         .anchor(orderButton, Tooltip.Gravity.TOP)
@@ -532,7 +536,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
             pendingOrderExpandedBindingMap.remove(order.item);
         }
 
-        orderButton.animate().alpha(0).start();
+        orderButton.animate().alpha(0).setDuration(200).start();
 
         int delay = 0;
         for (int i = 0; i < pendingItemsLayoutExpanded.getChildCount(); i++) {
@@ -573,6 +577,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
             @Override
             public void onTransitionEnd(Transition transition) {
                 orderButton.setAlpha(1);
+                updateOrderButtonText();
             }
 
             @Override
@@ -597,6 +602,9 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
             newlyUpdatedViews.add(addRequestedOrderView(order));
         }
 
+        pendingItemsLayoutExpanded.removeAllViews();
+        pendingItemsLayoutCollapsed.removeAllViews();
+
         updatePriceTextView();
         setJustOrderedState();
         setExistingPlacedOrdersState();
@@ -618,9 +626,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
     }
 
     private void updatePriceTextView() {
-        String priceString = String.format(Locale.getDefault(), "%.2f %s", sessionManager.getSession().getTotalSum(), sessionManager.getSession().currency);
-
-        totalPriceTextView.setText(priceString);
+        totalPriceTextView.setText(PriceUtil.getFormattedPrice(sessionManager));
     }
 
     private void revealPayFAB() {
@@ -641,8 +647,8 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
             pendingOrdersWrapper.addView(collapsedOrdersEmptyLayout);
         }
 
-        collapsedViewRef = collapsedOrdersEmptyLayout;
-        pendingExpandedViewRef = pendingExpandedEmptyView;
+        currentCollapsedViewRef = collapsedOrdersEmptyLayout;
+        currentPendingExpandedViewRef = pendingExpandedEmptyView;
 
         pendingItemsLayoutExpanded.removeAllViews();
         pendingItemsLayoutCollapsed.removeAllViews();
@@ -670,11 +676,8 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
             pendingOrdersWrapper.addView(collapsedOrdersEmptyLayout);
         }
 
-        collapsedViewRef = collapsedOrdersEmptyLayout;
-        pendingExpandedViewRef = pendingExpandedJustOrderedView;
-
-        pendingItemsLayoutExpanded.removeAllViews();
-        pendingItemsLayoutCollapsed.removeAllViews();
+        currentCollapsedViewRef = collapsedOrdersEmptyLayout;
+        currentPendingExpandedViewRef = pendingExpandedJustOrderedView;
 
         pendingOrdersCollapsedTitle.setText(R.string.on_the_way);
         pendingOrdersCollapsedSubtitle.setText(R.string.on_the_way_long);
@@ -758,7 +761,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
         });
         TransitionManager.beginDelayedTransition(pendingOrdersWrapper, autoTransition);
         pendingOrdersWrapper.removeAllViews();
-        pendingOrdersWrapper.addView(pendingExpandedViewRef);
+        pendingOrdersWrapper.addView(currentPendingExpandedViewRef);
         requestedOrdersWrapper.setAlpha(1);
     }
 
@@ -799,7 +802,7 @@ public class OrdersFragment extends Fragment implements SessionManager.OnSession
 
         TransitionManager.beginDelayedTransition(pendingOrdersWrapper, autoTransition);
         pendingOrdersWrapper.removeAllViews();
-        pendingOrdersWrapper.addView(collapsedViewRef);
+        pendingOrdersWrapper.addView(currentCollapsedViewRef);
         requestedOrdersWrapper.setAlpha(0);
     }
 }

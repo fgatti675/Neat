@@ -1,6 +1,7 @@
 package com.neat.dagger;
 
 import com.neat.model.SessionManager;
+import com.neat.model.UserManager;
 import com.neat.model.classes.User;
 
 import javax.inject.Named;
@@ -13,8 +14,8 @@ public class SessionModule {
 
     @Provides
     @SessionScope
-    SessionManager providesSessionManager(@Named("logged_user") User user) {
-        return new SessionManager(user);
+    SessionManager providesSessionManager(@Named("logged_user") User user, UserManager userManager) {
+        return new SessionManager(user, userManager);
     }
 
 

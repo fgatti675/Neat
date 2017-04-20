@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="next">Siguiente</string>
+    <string name="previous">Anterior</string>
+    <string name="done">Hecho</string>
+    <string name="card_holder_name_sample">Juan Muñoz</string>
+    <string name="card_holder">Titular</string>
+    <string name="expiry">Caduca</string>
+    <string name="mm_yy">MM/AA</string>
+    <string name="card_expiry">Caduca (MM/AA)</string>
+    <string name="card_mm_yy">MM/AA</string>
+    <string name="name_on_card">Nombre en la tarjeta</string>
+    <string name="card_number">Numero de tarjeta</string>
+    <string name="error_invalid_month">Mes de caducidad</string>
+    <string name="error_card_expired">Tarjeta caducada</string>
+    <string name="error_invalid_card">Tarjeta inválida</string>
+</resources>

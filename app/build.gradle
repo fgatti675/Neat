@@ -9,10 +9,16 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        multiDexEnabled = true
         vectorDrawables {
             useSupportLibrary true
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "ADYEN_TOKEN", "\"8214882970342041\""
+        buildConfigField "String", "ADYEN_PUBLIC_KEY", "\"10001|ABCA9A05B749152407B183CFAFB531D99A5519AC211F00D2299A0C0C170436C99B258852A4BB57D3585C17CAB42FC75C9917306E10768B8159EF1859E9F76B2E67FB8D131AF0B96E484227A7B74804588A37783DA2859E9722AC4648E920891EBC27ECFECCEAE70A3D061AC390A31CC8F38CDF90D1017F1F834F9F2F215020E65AA5ABB23900C26CE366958670D4EC8C4B67ACDED51390DC97A3DD27C65E5BD5981D627AB412BB7EBCB25495589F151E946D6EDE9F011E7E67B28ADFE6E9429FBCB54A35D45BA0000B4B7A4C83613830273717C62BCA478DA5638657215F7C7CF3B738360B9D728347395868392C4252C92AECBC514E3A477A56D865B4C15A49\""
+        buildConfigField "boolean", "ADYEN_TEST_SERVER", "true"
+
     }
     dataBinding {
         enabled = true
@@ -26,39 +32,38 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.android.support:design:25.1.1'
-    compile 'com.android.support:cardview-v7:25.1.1'
-    compile 'com.android.support:support-v4:25.1.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
-    compile 'com.google.android:flexbox:0.2.3'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.google.code.gson:gson:2.7'
-    compile 'com.google.firebase:firebase-database:10.0.1'
-    compile 'com.google.firebase:firebase-auth:10.0.1'
-    compile 'com.google.android.gms:play-services-auth:10.0.1'
-    compile 'com.google.android.gms:play-services-wallet:10.0.1'
 
-    compile 'com.facebook.android:facebook-android-sdk:4.9.0'
-    compile 'com.stripe:stripe-android:2.0.2'
+    //    compile 'com.google.android.gms:play-services-wallet:10.2.1'
 
-    compile 'it.sephiroth.android.library.targettooltip:target-tooltip-library:1.3.15'
-    compile 'com.hrules:horizontalnumberpicker:1.1.1'
-
-    testCompile 'junit:junit:4.12'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 
     // apt command comes from the android-apt plugin
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
-    compile 'com.google.dagger:dagger:2.8'
-    provided 'javax.annotation:jsr250-api:1.0'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':creditcarddesign')
 
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:cardview-v7:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.google.android:flexbox:0.2.3'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.google.firebase:firebase-database:10.2.1'
+    compile 'com.google.firebase:firebase-auth:10.2.1'
+    compile 'com.google.android.gms:play-services-auth:10.2.1'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.9.0'
+    compile 'com.google.dagger:dagger:2.8'
+    compile 'it.sephiroth.android.library.targettooltip:target-tooltip-library:1.3.15'
+    compile 'com.google.code.findbugs:jsr305:2.0.1'
+    testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
 }
 
 apply plugin: 'com.google.gms.google-services'

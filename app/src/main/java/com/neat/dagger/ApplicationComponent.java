@@ -9,13 +9,13 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {UserModule.class, AppModule.class, RestaurantModule.class})
+@Component(modules = { AppModule.class, RestaurantModule.class})
 public interface ApplicationComponent {
 
     RestaurantProvider restaurantProvider();
 
     NeatApplication application();
 
-    SessionComponent plus(SessionModule sessionModule);
+    UserComponent plus(UserModule userModule);
 
 }

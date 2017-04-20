@@ -12,7 +12,7 @@
     <string name="pending_products_title">Productos listos para pedir</string>
     <string name="requested_products_empty">No has pedido ningún producto aún</string>
     <string name="requested_products_info">Los productos ordenados se mostrarán aquí</string>
-    <string name="bill_so_far">Tu cuenta hasta ahora</string>
+    <string name="requested_items">Tu cuenta hasta ahora</string>
     <string name="on_the_way">¡Marchando!</string>
     <string name="on_the_way_long">Los productos seleccionados han sido pedidos</string>
     <string name="undo">Cancelar</string>
@@ -22,7 +22,9 @@
     <string name="add_to_pending_orders">Añadir a cola de pedidos</string>
     <string name="orders_button_tooltip">Pulsa este boton para confirmar tu orden</string>
     <string name="order_num_items">Pedir %d elementos</string>
-    <string name="add_a_note">Añade una note (sin picante, extra de salsa…)</string>
+    <string name="add_a_note">Añade una nota (sin picante, extra de salsa…)</string>
     <string name="error_placing_orders">Error al hacer orden</string>
     <string name="products_requested">%1$d ya han sido pedidos</string>
+    <string name="payment_method">Metodo de pago</string>
+    <string name="add_new_card">Añade una tarjeta de credito</string>
 </resources>

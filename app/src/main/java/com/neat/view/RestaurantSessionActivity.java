@@ -21,14 +21,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.facebook.login.LoginManager;
-import com.google.firebase.auth.FirebaseAuth;
 import com.neat.NeatApplication;
-import com.neat.PaymentActivity;
 import com.neat.R;
 import com.neat.databinding.ActivityRestaurantSessionSelectionBinding;
 import com.neat.model.RestaurantProvider;
 import com.neat.model.SessionManager;
+import com.neat.model.UserManager;
 import com.neat.model.classes.MenuSection;
 import com.neat.model.classes.Order;
 import com.neat.model.classes.Restaurant;
@@ -51,9 +49,14 @@ import butterknife.ButterKnife;
 public class RestaurantSessionActivity extends AppCompatActivity
         implements RestaurantProvider.Callback,
         SessionManager.OnSessionJoinedCallbacks,
-        SessionManager.OnOrdersPlacedListener {
+        SessionManager.OnOrdersPlacedListener,
+        SessionManager.OnPaymentCallbacks {
 
     private static final String TAG = RestaurantSessionActivity.class.getSimpleName();
+
+
+    @Inject
+    UserManager userManager;
 
     @Inject
     RestaurantProvider restaurantProvider;
@@ -115,6 +118,7 @@ public class RestaurantSessionActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
 
+        NeatApplication.getComponent(this).application().createUserComponent();
         NeatApplication.getComponent(this).application().createSessionComponent().inject(this);
 
         if (user == null) { // don't even bother
@@ -126,6 +130,7 @@ public class RestaurantSessionActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
+        sessionManager.addOnSessionPaidCallbacks(this);
         sessionManager.addOnSessionJoinedCallbacks(this);
         sessionManager.addOnOrdersPlacedListener(this);
 
@@ -149,6 +154,8 @@ public class RestaurantSessionActivity extends AppCompatActivity
 
         payAction = toolbar.findViewById(R.id.action_pay);
         payAction.setVisibility(View.GONE);
+//        payButton.setVisibility(View.GONE);
+
         payAction.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -183,7 +190,7 @@ public class RestaurantSessionActivity extends AppCompatActivity
 //                payButton.setTranslationX(translationX);
 //                payButton.setTranslationY(translationY);
 //                payButton.setAlpha(scrollPercentage);
-                payAction.setAlpha(1 - scrollPercentage);
+//                payAction.setAlpha(1 - scrollPercentage);
                 menuAction.setAlpha(1 - scrollPercentage);
 
                 // fade out elements that disappear
@@ -211,6 +218,7 @@ public class RestaurantSessionActivity extends AppCompatActivity
         super.onDestroy();
         sessionManager.removeOnOrdersPlacedListener(this);
         sessionManager.removeOnSessionJoinedCallbacks(this);
+        sessionManager.removeOnSessionPaidCallbacks(this);
     }
 
     @Override
@@ -265,6 +273,11 @@ public class RestaurantSessionActivity extends AppCompatActivity
         collapsingToolbarLayout.setTitle(restaurant.title);
         subtitle.setText(restaurant.subtitle);
 
+        if (session.hasRequestedOrders()) {
+            payAction.setVisibility(View.VISIBLE);
+//            payButton.setVisibility(View.VISIBLE);
+        }
+
         FragmentManager fragmentManager = getFragmentManager();
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -308,35 +321,14 @@ public class RestaurantSessionActivity extends AppCompatActivity
     }
 
     private void logout() {
-        // TODO: abstract away
-        // Firebase sign out
-        FirebaseAuth.getInstance().signOut();
-        LoginManager.getInstance().logOut();
+        userManager.logout();
         goToLogin();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ItemDetailsActivity.REQUEST_ITEM_DETAILS) {
-            if (resultCode == ItemDetailsActivity.RESULT_ITEM_ADDED) {
-//                sessionViewModel.addPendingOrder(
-//                        (Item) data.getSerializableExtra(ItemDetailsActivity.EXTRA_ITEM),
-//                        data.getIntExtra(ItemDetailsActivity.EXTRA_ITEM_COUNT, -1));
-            }
-        }
-
-    }
-
-    @Override
     public void onOrdersPlaced(Set<Order> newlyPlacedOrders) {
-        /*
-         * Reveal pay action
-         */
-        if (payAction.getVisibility() != View.VISIBLE) {
-            payAction.setVisibility(View.VISIBLE);
-        }
-
+        payAction.setVisibility(View.VISIBLE);
+//        payButton.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -348,5 +340,16 @@ public class RestaurantSessionActivity extends AppCompatActivity
     @Override
     public void onSessionJoinFail() {
         // TODO
+    }
+
+    @Override
+    public void onSessionPayed(Session session) {
+        Toast.makeText(this, "PAYMENT SUCCESS SCREEN HERE", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void onSessionPaymentFail() {
+
     }
 }

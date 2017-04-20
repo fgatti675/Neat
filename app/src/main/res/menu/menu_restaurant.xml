@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.neat.view.RestaurantSessionActivity">
     <item
-        android:id="@+id/action_pay"
-        android:title="@string/pay"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_menu"
         android:icon="@drawable/ic_view_list_white"
         android:title="@string/settings"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_pay"
+        android:title="@string/pay"
         app:showAsAction="always" />
 
     <item

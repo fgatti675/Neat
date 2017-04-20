@@ -42,12 +42,12 @@
                         android:fitsSystemWindows="true"
                         android:paddingBottom="100dp"
                         app:collapsedTitleTextAppearance="@style/Text.Title.White.Mono"
-                        app:contentScrim="@color/background_dark"
+                        app:contentScrim="@color/colorPrimary"
                         app:expandedTitleGravity="center"
                         app:expandedTitleMarginBottom="140dp"
                         app:expandedTitleTextAppearance="@style/Text.Display.Monospace.White"
                         app:layout_scrollFlags="scroll|enterAlwaysCollapsed|enterAlways|snap"
-                        app:statusBarScrim="@color/background_super_dark"
+                        app:statusBarScrim="@color/colorPrimaryDark"
                         app:title="Lateral">
 
                         <ImageView
